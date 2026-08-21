@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -6,9 +7,6 @@ import java.util.Scanner;
 public class Soar {
     /** Width of the line used to frame the chatbot's messages. */
     private static final int SEPARATOR_WIDTH = 60;
-
-    /** Maximum number of tasks that can be kept during one run. */
-    private static final int MAX_TASKS = 100;
 
     /**
      * Greets the user, stores tasks, lists or updates their status on request, and
@@ -31,8 +29,7 @@ public class Soar {
         System.out.println(separator);
 
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
@@ -47,33 +44,30 @@ public class Soar {
 
                 if (command.equals("list")) {
                     System.out.println("Here are the tasks in your list:");
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println((i + 1) + "." + tasks[i]);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + "." + tasks.get(i));
                     }
                 } else if (isCommand(command, "mark")) {
-                    int taskIndex = parseTaskIndex(command, "mark", taskCount);
-                    tasks[taskIndex].markAsDone();
+                    int taskIndex = parseTaskIndex(command, "mark", tasks.size());
+                    tasks.get(taskIndex).markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasks[taskIndex]);
+                    System.out.println("  " + tasks.get(taskIndex));
                 } else if (isCommand(command, "unmark")) {
-                    int taskIndex = parseTaskIndex(command, "unmark", taskCount);
-                    tasks[taskIndex].markAsNotDone();
+                    int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
+                    tasks.get(taskIndex).markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks[taskIndex]);
+                    System.out.println("  " + tasks.get(taskIndex));
                 } else if (isCommand(command, "todo")) {
                     String description = command.substring("todo".length()).trim();
                     requireDescription(description, "todo");
-                    tasks[taskCount] = new ToDo(description);
-                    taskCount++;
-                    printTaskAdded(tasks[taskCount - 1], taskCount);
+                    tasks.add(new ToDo(description));
+                    printTaskAdded(tasks.getLast(), tasks.size());
                 } else if (isCommand(command, "deadline")) {
-                    tasks[taskCount] = parseDeadline(command);
-                    taskCount++;
-                    printTaskAdded(tasks[taskCount - 1], taskCount);
+                    tasks.add(parseDeadline(command));
+                    printTaskAdded(tasks.getLast(), tasks.size());
                 } else if (isCommand(command, "event")) {
-                    tasks[taskCount] = parseEvent(command);
-                    taskCount++;
-                    printTaskAdded(tasks[taskCount - 1], taskCount);
+                    tasks.add(parseEvent(command));
+                    printTaskAdded(tasks.getLast(), tasks.size());
                 } else {
                     throw new UnknownCommandException();
                 }
