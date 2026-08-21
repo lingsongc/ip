@@ -10,11 +10,66 @@
 
 ## Test cases
 
-Add each command/expected-output pair supplied for a testing request here before running `$test-ui`. Every test case must specify:
+### TC-001 — Polymorphic task types
 
-- a heading in the form `### TC-001 — Short test name`;
-- an `- Aim:` line;
-- an `#### Inputs` heading followed by a `text` fenced block; and
-- an `#### Expected output` heading followed by a `text` fenced block containing the complete expected console output.
+- Aim: Verify todo, deadline, and event formatting through the shared task list.
 
-There are no test cases yet because no commands or expected outputs have been supplied.
+#### Inputs
+
+```text
+todo borrow book
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
+deadline do homework /by no idea :-p
+mark 2
+list
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] do homework (by: no idea :-p)
+Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [D][X] return book (by: Sunday)
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] borrow book
+2.[D][X] return book (by: Sunday)
+3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+4.[D][ ] do homework (by: no idea :-p)
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
