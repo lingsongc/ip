@@ -36,46 +36,46 @@ public class Soar {
             System.out.println(separator);
 
             try {
-                if (command.equals("bye")) {
+                CommandType commandType = CommandType.fromInput(command);
+
+                if (commandType == CommandType.BYE) {
                     System.out.println("Bye! Always soar towards your goals!");
                     System.out.println(separator);
                     break;
                 }
 
-                if (command.equals("list")) {
+                if (commandType == CommandType.LIST) {
                     System.out.println("Here are the tasks in your list:");
                     for (int i = 0; i < tasks.size(); i++) {
                         System.out.println((i + 1) + "." + tasks.get(i));
                     }
-                } else if (isCommand(command, "mark")) {
-                    int taskIndex = parseTaskIndex(command, "mark", tasks.size());
+                } else if (commandType == CommandType.MARK) {
+                    int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     tasks.get(taskIndex).markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks.get(taskIndex));
-                } else if (isCommand(command, "unmark")) {
-                    int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
+                } else if (commandType == CommandType.UNMARK) {
+                    int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks.get(taskIndex));
-                } else if (isCommand(command, "delete")) {
-                    int taskIndex = parseTaskIndex(command, "delete", tasks.size());
+                } else if (commandType == CommandType.DELETE) {
+                    int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                } else if (isCommand(command, "todo")) {
-                    String description = command.substring("todo".length()).trim();
-                    requireDescription(description, "todo");
+                } else if (commandType == CommandType.TODO) {
+                    String description = command.substring(commandType.getCommandWord().length()).trim();
+                    requireDescription(description, commandType.getCommandWord());
                     tasks.add(new ToDo(description));
                     printTaskAdded(tasks.getLast(), tasks.size());
-                } else if (isCommand(command, "deadline")) {
+                } else if (commandType == CommandType.DEADLINE) {
                     tasks.add(parseDeadline(command));
                     printTaskAdded(tasks.getLast(), tasks.size());
-                } else if (isCommand(command, "event")) {
+                } else if (commandType == CommandType.EVENT) {
                     tasks.add(parseEvent(command));
                     printTaskAdded(tasks.getLast(), tasks.size());
-                } else {
-                    throw new UnknownCommandException();
                 }
             } catch (SoarException e) {
                 System.out.println(e.getMessage());
@@ -86,40 +86,23 @@ public class Soar {
     }
 
     /**
-     * Checks whether an input line contains the given command word.
-     *
-     * @param input complete line entered by the user
-     * @param commandWord command word to look for
-     * @return true if the line is exactly the command or starts with it and a space
-     */
-    private static boolean isCommand(String input, String commandWord) {
-        return input.equals(commandWord) || input.startsWith(commandWord + " ");
-    }
-
-    /**
      * Parses and validates the task number in a mark, unmark, or delete command.
      *
      * @param input complete line entered by the user
-     * @param commandWord mark, unmark, or delete
+     * @param commandType mark, unmark, or delete
      * @param taskCount number of tasks currently stored
      * @return zero-based index of the selected task
      * @throws InvalidTaskNumberException if the number is missing, not an integer,
      *         or outside the task list
      */
-    private static int parseTaskIndex(String input, String commandWord, int taskCount)
+    private static int parseTaskIndex(String input, CommandType commandType, int taskCount)
             throws InvalidTaskNumberException {
+        String commandWord = commandType.getCommandWord();
         String taskNumberText = input.substring(commandWord.length()).trim();
         if (taskNumberText.isEmpty()) {
-            String taskAction;
-            if (commandWord.equals("mark")) {
-                taskAction = "has completed its flight";
-            } else if (commandWord.equals("unmark")) {
-                taskAction = "should return to the flight path";
-            } else {
-                taskAction = "should be shot down";
-            }
             throw new InvalidTaskNumberException("Add a task number after '" + commandWord
-                    + "' so I know which task " + taskAction + "!");
+                    + "' so I know which task "
+                    + commandType.getMissingTaskNumberAction().getDescription() + "!");
         }
 
         int taskNumber;
@@ -151,7 +134,7 @@ public class Soar {
      * @throws SoarException if the description or due date is missing
      */
     private static Deadline parseDeadline(String input) throws SoarException {
-        String details = input.substring("deadline".length()).trim();
+        String details = input.substring(CommandType.DEADLINE.getCommandWord().length()).trim();
         int byIndex = details.indexOf("/by");
         if (byIndex < 0) {
             throw new InvalidTaskFormatException(
@@ -160,7 +143,7 @@ public class Soar {
 
         String description = details.substring(0, byIndex).trim();
         String by = details.substring(byIndex + "/by".length()).trim();
-        requireDescription(description, "deadline");
+        requireDescription(description, CommandType.DEADLINE.getCommandWord());
         if (by.isEmpty()) {
             throw new InvalidTaskFormatException(
                     "The deadline's '/by' date is empty. Add a date or time so it can fly on schedule!");
@@ -176,7 +159,7 @@ public class Soar {
      * @throws SoarException if the description, start, or end value is missing
      */
     private static Event parseEvent(String input) throws SoarException {
-        String details = input.substring("event".length()).trim();
+        String details = input.substring(CommandType.EVENT.getCommandWord().length()).trim();
         int fromIndex = details.indexOf("/from");
         int toIndex = fromIndex < 0 ? -1 : details.indexOf("/to", fromIndex + "/from".length());
         if (fromIndex < 0 || toIndex < 0) {
@@ -187,7 +170,7 @@ public class Soar {
         String description = details.substring(0, fromIndex).trim();
         String from = details.substring(fromIndex + "/from".length(), toIndex).trim();
         String to = details.substring(toIndex + "/to".length()).trim();
-        requireDescription(description, "event");
+        requireDescription(description, CommandType.EVENT.getCommandWord());
         if (from.isEmpty() || to.isEmpty()) {
             throw new InvalidTaskFormatException(
                     "The event's flight times are incomplete. Fill in both '/from' and '/to' values!");

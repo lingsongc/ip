@@ -348,13 +348,14 @@ ____________________________________________________________
 
 ### TC-006 — Command lookalikes preserve list state
 
-- Aim: Verify that inputs resembling valid commands are rejected without adding tasks or changing completion state.
+- Aim: Verify that command lookalikes and arguments after exact commands are rejected without changing list state.
 
 #### Inputs
 
 ```text
 todo real task
 todoist fake task
+list extra
 list
 mark 1
 mark1
@@ -363,6 +364,7 @@ unmark1
 list
 unmark 1
 list
+bye now
 bye
 ```
 
@@ -382,6 +384,9 @@ ____________________________________________________________
 Got it. I've added this task:
   [T][ ] real task
 Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
@@ -415,6 +420,9 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] real task
+____________________________________________________________
+____________________________________________________________
+That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
