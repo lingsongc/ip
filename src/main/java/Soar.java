@@ -75,10 +75,38 @@ public class Soar {
                 } catch (NumberFormatException e) {
                     System.out.println("Please enter a task number after unmark.");
                 }
-            } else {
-                tasks[taskCount] = new Task(command);
+            } else if (command.startsWith("todo ")) {
+                String description = command.substring("todo".length()).trim();
+                tasks[taskCount] = new Task(description, "T");
                 taskCount++;
-                System.out.println("added: " + command);
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskCount - 1]);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+            } else if (command.startsWith("deadline ") && command.contains(" /by ")) {
+                int byIndex = command.indexOf(" /by ");
+                String description = command.substring("deadline".length(), byIndex).trim();
+                String by = command.substring(byIndex + " /by ".length()).trim();
+                String taskDescription = description + " (by: " + by + ")";
+                tasks[taskCount] = new Task(taskDescription, "D");
+                taskCount++;
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskCount - 1]);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+            } else if (command.startsWith("event ")
+                    && command.contains(" /from ") && command.contains(" /to ")) {
+                int fromIndex = command.indexOf(" /from ");
+                int toIndex = command.indexOf(" /to ", fromIndex + " /from ".length());
+                String description = command.substring("event".length(), fromIndex).trim();
+                String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
+                String to = command.substring(toIndex + " /to ".length()).trim();
+                String taskDescription = description + " (from: " + from + " to: " + to + ")";
+                tasks[taskCount] = new Task(taskDescription, "E");
+                taskCount++;
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskCount - 1]);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+            } else {
+                System.out.println("I don't recognise that command yet.");
             }
 
             System.out.println(separator);
