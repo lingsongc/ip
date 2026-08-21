@@ -11,8 +11,8 @@ public class Soar {
     private static final int MAX_TASKS = 100;
 
     /**
-     * Greets the user, stores tasks, lists or marks them on request, and exits when
-     * the user enters {@code bye}.
+     * Greets the user, stores tasks, lists or updates their status on request, and
+     * exits when the user enters {@code bye}.
      *
      * @param args command-line arguments; they are not used
      */
@@ -64,6 +64,19 @@ public class Soar {
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Please enter a task number after mark.");
+                }
+            } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                try {
+                    int taskIndex = Integer.parseInt(command.substring("unmark".length()).trim()) - 1;
+                    if (taskIndex < 0 || taskIndex >= taskCount) {
+                        System.out.println("Please enter the number of a task in your list.");
+                    } else {
+                        isDone[taskIndex] = false;
+                        System.out.println("OK, I've marked this task as not done yet:");
+                        System.out.println("  [ ] " + tasks[taskIndex]);
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Please enter a task number after unmark.");
                 }
             } else {
                 tasks[taskCount] = command;
