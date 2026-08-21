@@ -38,76 +38,178 @@ public class Soar {
             String command = scanner.nextLine();
             System.out.println(separator);
 
-            if (command.equals("bye")) {
-                System.out.println("Bye! Always soar towards your goals!");
-                System.out.println(separator);
-                break;
-            }
+            try {
+                if (command.equals("bye")) {
+                    System.out.println("Bye! Always soar towards your goals!");
+                    System.out.println(separator);
+                    break;
+                }
 
-            if (command.equals("list")) {
-                System.out.println("Here are the tasks in your list:");
-                for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + "." + tasks[i]);
-                }
-            } else if (command.equals("mark") || command.startsWith("mark ")) {
-                try {
-                    int taskIndex = Integer.parseInt(command.substring("mark".length()).trim()) - 1;
-                    if (taskIndex < 0 || taskIndex >= taskCount) {
-                        System.out.println("Please enter the number of a task in your list.");
-                    } else {
-                        tasks[taskIndex].markAsDone();
-                        System.out.println("Nice! I've marked this task as done:");
-                        System.out.println("  " + tasks[taskIndex]);
+                if (command.equals("list")) {
+                    System.out.println("Here are the tasks in your list:");
+                    for (int i = 0; i < taskCount; i++) {
+                        System.out.println((i + 1) + "." + tasks[i]);
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("Please enter a task number after mark.");
+                } else if (isCommand(command, "mark")) {
+                    int taskIndex = parseTaskIndex(command, "mark", taskCount);
+                    tasks[taskIndex].markAsDone();
+                    System.out.println("Nice! I've marked this task as done:");
+                    System.out.println("  " + tasks[taskIndex]);
+                } else if (isCommand(command, "unmark")) {
+                    int taskIndex = parseTaskIndex(command, "unmark", taskCount);
+                    tasks[taskIndex].markAsNotDone();
+                    System.out.println("OK, I've marked this task as not done yet:");
+                    System.out.println("  " + tasks[taskIndex]);
+                } else if (isCommand(command, "todo")) {
+                    String description = command.substring("todo".length()).trim();
+                    requireDescription(description, "todo");
+                    tasks[taskCount] = new ToDo(description);
+                    taskCount++;
+                    printTaskAdded(tasks[taskCount - 1], taskCount);
+                } else if (isCommand(command, "deadline")) {
+                    tasks[taskCount] = parseDeadline(command);
+                    taskCount++;
+                    printTaskAdded(tasks[taskCount - 1], taskCount);
+                } else if (isCommand(command, "event")) {
+                    tasks[taskCount] = parseEvent(command);
+                    taskCount++;
+                    printTaskAdded(tasks[taskCount - 1], taskCount);
+                } else {
+                    throw new UnknownCommandException();
                 }
-            } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                try {
-                    int taskIndex = Integer.parseInt(command.substring("unmark".length()).trim()) - 1;
-                    if (taskIndex < 0 || taskIndex >= taskCount) {
-                        System.out.println("Please enter the number of a task in your list.");
-                    } else {
-                        tasks[taskIndex].markAsNotDone();
-                        System.out.println("OK, I've marked this task as not done yet:");
-                        System.out.println("  " + tasks[taskIndex]);
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Please enter a task number after unmark.");
-                }
-            } else if (command.startsWith("todo ")) {
-                String description = command.substring("todo".length()).trim();
-                tasks[taskCount] = new ToDo(description);
-                taskCount++;
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount - 1]);
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-            } else if (command.startsWith("deadline ") && command.contains(" /by ")) {
-                int byIndex = command.indexOf(" /by ");
-                String description = command.substring("deadline".length(), byIndex).trim();
-                String by = command.substring(byIndex + " /by ".length()).trim();
-                tasks[taskCount] = new Deadline(description, by);
-                taskCount++;
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount - 1]);
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-            } else if (command.startsWith("event ")
-                    && command.contains(" /from ") && command.contains(" /to ")) {
-                int fromIndex = command.indexOf(" /from ");
-                int toIndex = command.indexOf(" /to ", fromIndex + " /from ".length());
-                String description = command.substring("event".length(), fromIndex).trim();
-                String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
-                String to = command.substring(toIndex + " /to ".length()).trim();
-                tasks[taskCount] = new Event(description, from, to);
-                taskCount++;
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount - 1]);
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-            } else {
-                System.out.println("I don't recognise that command yet.");
+            } catch (SoarException e) {
+                System.out.println(e.getMessage());
             }
 
             System.out.println(separator);
         }
+    }
+
+    /**
+     * Checks whether an input line contains the given command word.
+     *
+     * @param input complete line entered by the user
+     * @param commandWord command word to look for
+     * @return true if the line is exactly the command or starts with it and a space
+     */
+    private static boolean isCommand(String input, String commandWord) {
+        return input.equals(commandWord) || input.startsWith(commandWord + " ");
+    }
+
+    /**
+     * Parses and validates the task number in a mark or unmark command.
+     *
+     * @param input complete line entered by the user
+     * @param commandWord either mark or unmark
+     * @param taskCount number of tasks currently stored
+     * @return zero-based index of the selected task
+     * @throws InvalidTaskNumberException if the number is missing, not an integer,
+     *         or outside the task list
+     */
+    private static int parseTaskIndex(String input, String commandWord, int taskCount)
+            throws InvalidTaskNumberException {
+        String taskNumberText = input.substring(commandWord.length()).trim();
+        if (taskNumberText.isEmpty()) {
+            throw new InvalidTaskNumberException("Add a task number after '" + commandWord
+                    + "' so I know which task should soar next!");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(taskNumberText);
+        } catch (NumberFormatException e) {
+            throw new InvalidTaskNumberException("'" + taskNumberText
+                    + "' is not a whole task number. Choose a number from your list to keep flying high!");
+        }
+
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            if (taskCount == 0) {
+                throw new InvalidTaskNumberException(
+                        "Your task list is an open sky right now. Add a task before using '"
+                                + commandWord + "'!");
+            }
+            throw new InvalidTaskNumberException("Task " + taskNumber
+                    + " is outside your list. Choose a number from 1 to " + taskCount
+                    + " and we'll stay on course!");
+        }
+        return taskNumber - 1;
+    }
+
+    /**
+     * Builds a deadline after checking its description and {@code /by} value.
+     *
+     * @param input complete deadline command
+     * @return validated deadline
+     * @throws SoarException if the description or due date is missing
+     */
+    private static Deadline parseDeadline(String input) throws SoarException {
+        String details = input.substring("deadline".length()).trim();
+        int byIndex = details.indexOf("/by");
+        if (byIndex < 0) {
+            throw new InvalidTaskFormatException(
+                    "This deadline has no '/by' date. Add one so it has a clear path through the sky!");
+        }
+
+        String description = details.substring(0, byIndex).trim();
+        String by = details.substring(byIndex + "/by".length()).trim();
+        requireDescription(description, "deadline");
+        if (by.isEmpty()) {
+            throw new InvalidTaskFormatException(
+                    "The deadline's '/by' date is empty. Add a date or time so it can fly on schedule!");
+        }
+        return new Deadline(description, by);
+    }
+
+    /**
+     * Builds an event after checking its description and time range.
+     *
+     * @param input complete event command
+     * @return validated event
+     * @throws SoarException if the description, start, or end value is missing
+     */
+    private static Event parseEvent(String input) throws SoarException {
+        String details = input.substring("event".length()).trim();
+        int fromIndex = details.indexOf("/from");
+        int toIndex = fromIndex < 0 ? -1 : details.indexOf("/to", fromIndex + "/from".length());
+        if (fromIndex < 0 || toIndex < 0) {
+            throw new InvalidTaskFormatException(
+                    "This event needs both '/from' and '/to' times to map its flight across the sky!");
+        }
+
+        String description = details.substring(0, fromIndex).trim();
+        String from = details.substring(fromIndex + "/from".length(), toIndex).trim();
+        String to = details.substring(toIndex + "/to".length()).trim();
+        requireDescription(description, "event");
+        if (from.isEmpty() || to.isEmpty()) {
+            throw new InvalidTaskFormatException(
+                    "The event's flight times are incomplete. Fill in both '/from' and '/to' values!");
+        }
+        return new Event(description, from, to);
+    }
+
+    /**
+     * Rejects an empty task description with a task-specific explanation.
+     *
+     * @param description description to validate
+     * @param taskType type of task being created
+     * @throws EmptyDescriptionException if the description is empty
+     */
+    private static void requireDescription(String description, String taskType)
+            throws EmptyDescriptionException {
+        if (description.isEmpty()) {
+            throw new EmptyDescriptionException(taskType);
+        }
+    }
+
+    /**
+     * Prints the shared confirmation shown after adding any task type.
+     *
+     * @param task task that was added
+     * @param taskCount updated number of stored tasks
+     */
+    private static void printTaskAdded(Task task, int taskCount) {
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + task);
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
     }
 }
