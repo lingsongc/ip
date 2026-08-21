@@ -1,5 +1,5 @@
 /**
- * Signals that a mark or unmark command does not identify an existing task.
+ * Signals that a mark, unmark, or delete command does not identify an existing task.
  */
 public class InvalidTaskNumberException extends SoarException {
     /**

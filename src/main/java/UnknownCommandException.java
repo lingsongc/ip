@@ -5,6 +5,6 @@ public class UnknownCommandException extends SoarException {
     /** Creates an exception that lists the commands Soar understands. */
     public UnknownCommandException() {
         super("That command is on an unfamiliar flight path. "
-                + "Try list, todo, deadline, event, mark, unmark, or bye to keep flying high!");
+                + "Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!");
     }
 }

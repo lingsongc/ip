@@ -57,6 +57,12 @@ public class Soar {
                     tasks.get(taskIndex).markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks.get(taskIndex));
+                } else if (isCommand(command, "delete")) {
+                    int taskIndex = parseTaskIndex(command, "delete", tasks.size());
+                    Task removedTask = tasks.remove(taskIndex);
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + removedTask);
+                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
                 } else if (isCommand(command, "todo")) {
                     String description = command.substring("todo".length()).trim();
                     requireDescription(description, "todo");
@@ -91,10 +97,10 @@ public class Soar {
     }
 
     /**
-     * Parses and validates the task number in a mark or unmark command.
+     * Parses and validates the task number in a mark, unmark, or delete command.
      *
      * @param input complete line entered by the user
-     * @param commandWord either mark or unmark
+     * @param commandWord mark, unmark, or delete
      * @param taskCount number of tasks currently stored
      * @return zero-based index of the selected task
      * @throws InvalidTaskNumberException if the number is missing, not an integer,
@@ -104,8 +110,16 @@ public class Soar {
             throws InvalidTaskNumberException {
         String taskNumberText = input.substring(commandWord.length()).trim();
         if (taskNumberText.isEmpty()) {
+            String taskAction;
+            if (commandWord.equals("mark")) {
+                taskAction = "has completed its flight";
+            } else if (commandWord.equals("unmark")) {
+                taskAction = "should return to the flight path";
+            } else {
+                taskAction = "should be shot down";
+            }
             throw new InvalidTaskNumberException("Add a task number after '" + commandWord
-                    + "' so I know which task should soar next!");
+                    + "' so I know which task " + taskAction + "!");
         }
 
         int taskNumber;

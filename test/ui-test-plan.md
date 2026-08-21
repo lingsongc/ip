@@ -120,7 +120,7 @@ ____________________________________________________________
 Your task list is an open sky right now. Add a task before using 'mark'!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -270,13 +270,14 @@ ____________________________________________________________
 
 ### TC-005 — Invalid task-number formats preserve state
 
-- Aim: Verify that missing, negative, decimal, and oversized task numbers do not change a task before or after a valid mark command.
+- Aim: Verify that missing, negative, decimal, and oversized task numbers do not change a task before or after valid mark and unmark commands.
 
 #### Inputs
 
 ```text
 todo keep state
 mark
+unmark
 list
 mark -1
 list
@@ -306,7 +307,10 @@ Got it. I've added this task:
 Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-Add a task number after 'mark' so I know which task should soar next!
+Add a task number after 'mark' so I know which task has completed its flight!
+____________________________________________________________
+____________________________________________________________
+Add a task number after 'unmark' so I know which task should return to the flight path!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -380,7 +384,7 @@ Got it. I've added this task:
 Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -391,14 +395,14 @@ Nice! I've marked this task as done:
   [T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -416,6 +420,7 @@ ____________________________________________________________
 Bye! Always soar towards your goals!
 ____________________________________________________________
 ```
+
 
 ### TC-007 — Task list grows beyond the former array limit
 
@@ -1044,6 +1049,159 @@ ____________________________________________________________
 Got it. I've added this task:
   [T][ ] task 101
 Now you have 101 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-008 — Delete a task and renumber the list
+
+- Aim: Verify that deleting a task reports the removed task, decreases the count, and closes the numbering gap.
+
+#### Inputs
+
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+todo join sports club
+todo borrow book
+mark 1
+mark 2
+mark 4
+list
+delete 3
+list
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: June 6th)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] join sports club
+Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 5 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] read book
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [D][X] return book (by: June 6th)
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] join sports club
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][X] read book
+2.[D][X] return book (by: June 6th)
+3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+4.[T][X] join sports club
+5.[T][ ] borrow book
+____________________________________________________________
+____________________________________________________________
+Noted. I've removed this task:
+  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][X] read book
+2.[D][X] return book (by: June 6th)
+3.[T][X] join sports club
+4.[T][ ] borrow book
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-009 — Invalid delete commands preserve the list
+
+- Aim: Verify that missing, nonnumeric, empty-list, and out-of-range delete targets are rejected without changing task data.
+
+#### Inputs
+
+```text
+delete
+delete two
+delete 1
+todo anchor task
+delete 0
+delete 2
+list
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Add a task number after 'delete' so I know which task should be shot down!
+____________________________________________________________
+____________________________________________________________
+'two' is not a whole task number. Choose a number from your list to keep flying high!
+____________________________________________________________
+____________________________________________________________
+Your task list is an open sky right now. Add a task before using 'delete'!
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] anchor task
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Task 0 is outside your list. Choose a number from 1 to 1 and we'll stay on course!
+____________________________________________________________
+____________________________________________________________
+Task 2 is outside your list. Choose a number from 1 to 1 and we'll stay on course!
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] anchor task
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
