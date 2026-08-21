@@ -1,11 +1,11 @@
 ---
 name: test-ui
-description: Record and run fail-fast console UI tests from lists of input commands and expected outputs. Use when testing a command-line or text-based program, updating test/ui-test-plan.md, capturing a console test transcript, or diagnosing a mismatch between expected and actual terminal output.
+description: Record and run fail-fast console UI tests from lists of input commands and expected outputs. Use after every application or test-code update, and when testing a command-line or text-based program, updating test/ui-test-plan.md, capturing a console test transcript, or diagnosing a mismatch between expected and actual terminal output.
 ---
 
 # Test UI
 
-Record console test cases in `test/ui-test-plan.md`, run each case in a fresh program process, compare its complete output exactly, and stop at the first failure.
+After every application or test-code update, review and update `test/ui-test-plan.md` if needed, then run its console test cases. Run each case in a fresh program process, compare its complete output exactly, and stop at the first failure.
 
 ## Record the test plan
 
