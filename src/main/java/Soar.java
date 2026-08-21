@@ -77,7 +77,7 @@ public class Soar {
                 }
             } else if (command.startsWith("todo ")) {
                 String description = command.substring("todo".length()).trim();
-                tasks[taskCount] = new Task(description, "T");
+                tasks[taskCount] = new ToDo(description);
                 taskCount++;
                 System.out.println("Got it. I've added this task:");
                 System.out.println("  " + tasks[taskCount - 1]);
@@ -86,8 +86,7 @@ public class Soar {
                 int byIndex = command.indexOf(" /by ");
                 String description = command.substring("deadline".length(), byIndex).trim();
                 String by = command.substring(byIndex + " /by ".length()).trim();
-                String taskDescription = description + " (by: " + by + ")";
-                tasks[taskCount] = new Task(taskDescription, "D");
+                tasks[taskCount] = new Deadline(description, by);
                 taskCount++;
                 System.out.println("Got it. I've added this task:");
                 System.out.println("  " + tasks[taskCount - 1]);
@@ -99,8 +98,7 @@ public class Soar {
                 String description = command.substring("event".length(), fromIndex).trim();
                 String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
                 String to = command.substring(toIndex + " /to ".length()).trim();
-                String taskDescription = description + " (from: " + from + " to: " + to + ")";
-                tasks[taskCount] = new Task(taskDescription, "E");
+                tasks[taskCount] = new Event(description, from, to);
                 taskCount++;
                 System.out.println("Got it. I've added this task:");
                 System.out.println("  " + tasks[taskCount - 1]);
