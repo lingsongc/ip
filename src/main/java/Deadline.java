@@ -1,19 +1,69 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 /**
  * Represents a task that must be completed by a particular date or time.
  */
 public class Deadline extends Task {
-    /** Date or time by which the task should be completed. */
-    protected String by;
+    /** Human-readable date format used when showing a deadline. */
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
+
+    /** Human-readable time format used when the user supplied a time. */
+    private static final DateTimeFormatter DISPLAY_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("h:mma", Locale.ENGLISH);
+
+    /** Date and optional time by which the task should be completed. */
+    private final LocalDateTime by;
+
+    /** Whether the original deadline included a time of day. */
+    private final boolean hasTime;
 
     /**
-     * Creates an incomplete deadline with the given description and due date.
+     * Creates an incomplete deadline due on the given date.
      *
      * @param description description of what needs to be done
-     * @param by date or time by which the task should be completed
+     * @param by date by which the task should be completed
      */
-    public Deadline(String description, String by) {
+    public Deadline(String description, LocalDate by) {
+        super(description);
+        this.by = by.atStartOfDay();
+        this.hasTime = false;
+    }
+
+    /**
+     * Creates an incomplete deadline due at the given date and time.
+     *
+     * @param description description of what needs to be done
+     * @param by date and time by which the task should be completed
+     */
+    public Deadline(String description, LocalDateTime by) {
         super(description);
         this.by = by;
+        this.hasTime = true;
+    }
+
+    /**
+     * Returns the deadline as a typed date-time value.
+     *
+     * <p>Date-only deadlines use midnight and can be distinguished with
+     * {@link #hasTime()}.</p>
+     *
+     * @return due date and time
+     */
+    public LocalDateTime getBy() {
+        return by;
+    }
+
+    /**
+     * Returns whether this deadline includes an explicit time of day.
+     *
+     * @return {@code true} when a time was supplied
+     */
+    public boolean hasTime() {
+        return hasTime;
     }
 
     @Override
@@ -23,12 +73,19 @@ public class Deadline extends Task {
 
     @Override
     public String toDataString() {
+        String storedBy = hasTime
+                ? by.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                : by.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
         return "D | " + getDataStatus() + " | " + Storage.escapeField(description)
-                + " | " + Storage.escapeField(by);
+                + " | " + storedBy;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " (by: " + by + ")";
+        String displayedBy = by.format(DISPLAY_DATE_FORMAT);
+        if (hasTime) {
+            displayedBy += ", " + by.format(DISPLAY_TIME_FORMAT);
+        }
+        return super.toString() + " (by: " + displayedBy + ")";
     }
 }

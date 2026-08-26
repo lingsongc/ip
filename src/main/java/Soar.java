@@ -1,5 +1,10 @@
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,6 +15,10 @@ import java.util.Scanner;
 public class Soar {
     /** Width of the line used to frame the chatbot's messages. */
     private static final int SEPARATOR_WIDTH = 60;
+
+    /** Accepted format for a deadline containing both a date and a time. */
+    private static final DateTimeFormatter DEADLINE_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("d/M/uuuu HHmm").withResolverStyle(ResolverStyle.STRICT);
 
     /** Message shown when a task-list change cannot be safely persisted. */
     private static final String SAVE_ERROR_MESSAGE =
@@ -194,7 +203,7 @@ public class Soar {
      *
      * @param input complete deadline command
      * @return validated deadline
-     * @throws SoarException if the description or due date is missing
+     * @throws SoarException if the description or due date is missing or invalid
      */
     private static Deadline parseDeadline(String input) throws SoarException {
         String details = input.substring(CommandType.DEADLINE.getCommandWord().length()).trim();
@@ -211,7 +220,15 @@ public class Soar {
             throw new InvalidTaskFormatException(
                     "The deadline's '/by' date is empty. Add a date or time so it can fly on schedule!");
         }
-        return new Deadline(description, by);
+        try {
+            if (by.contains(" ")) {
+                return new Deadline(description, LocalDateTime.parse(by, DEADLINE_DATE_TIME_FORMAT));
+            }
+            return new Deadline(description, LocalDate.parse(by, DateTimeFormatter.ISO_LOCAL_DATE));
+        } catch (DateTimeParseException e) {
+            throw new InvalidTaskFormatException("I couldn't understand the deadline '" + by
+                    + "'. Use yyyy-MM-dd, or d/M/yyyy HHmm when including a time!");
+        }
     }
 
     /**

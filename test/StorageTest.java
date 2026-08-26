@@ -1,5 +1,7 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class StorageTest {
     private static void verifyValidRecords(Path dataFile) throws Exception {
         Files.write(dataFile, List.of(
                 "T | 1 | read book",
-                "D | 0 | return book | June 6th",
+                "D | 0 | return book | 2019-06-06",
                 "E | 1 | project meeting | Aug 6th 2pm | 4pm"));
 
         List<Task> tasks = new Storage(dataFile).load();
@@ -42,8 +44,12 @@ public class StorageTest {
         require(tasks.get(1) instanceof Deadline, "Expected the second task to be a deadline");
         require(tasks.get(2) instanceof Event, "Expected the third task to be an event");
         require(tasks.get(0).toString().equals("[T][X] read book"), "Todo data was not restored");
-        require(tasks.get(1).toString().equals("[D][ ] return book (by: June 6th)"),
+        require(tasks.get(1).toString().equals("[D][ ] return book (by: Jun 06 2019)"),
                 "Deadline data was not restored");
+        Deadline deadline = (Deadline) tasks.get(1);
+        require(deadline.getBy().equals(LocalDate.of(2019, 6, 6).atStartOfDay()),
+                "Deadline was not restored as a typed date");
+        require(!deadline.hasTime(), "A date-only deadline should not gain a time");
         require(tasks.get(2).toString().equals(
                 "[E][X] project meeting (from: Aug 6th 2pm to: 4pm)"),
                 "Event data was not restored");
@@ -83,7 +89,7 @@ public class StorageTest {
     private static void verifyEscapedTextRoundTrip(Path dataFile) throws Exception {
         ArrayList<Task> original = new ArrayList<>();
         original.add(new ToDo("pipe | slash \\ newline\ncarriage\rreturn"));
-        original.add(new Deadline("submit | report", "C:\\temp\\due | Friday"));
+        original.add(new Deadline("submit | report", LocalDateTime.of(2019, 12, 2, 18, 0)));
         original.add(new Event("team sync", "room | one", "room \\ two"));
         original.get(1).markAsDone();
 
@@ -104,6 +110,7 @@ public class StorageTest {
         expectInvalid(dataFile, List.of("X | 0 | unknown"), "unknown task type");
         expectInvalid(dataFile, List.of("T | 2 | bad status"), "completion status");
         expectInvalid(dataFile, List.of("D | 0 | missing date"), "requires 4 fields");
+        expectInvalid(dataFile, List.of("D | 0 | bad date | 2019-02-29"), "deadline date");
         expectInvalid(dataFile, List.of("T | 0 | task | extra"), "requires 3 fields");
         expectInvalid(dataFile, List.of("T | 0 |  "), "must not be empty");
         expectInvalid(dataFile, List.of("T | 0 | bad\\qescape"), "unsupported escape");

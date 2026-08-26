@@ -18,9 +18,9 @@
 
 ```text
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2/12/2019 1800
 event project meeting /from Mon 2pm /to 4pm
-deadline do homework /by no idea :-p
+deadline do homework /by 2019-10-15
 mark 2
 list
 bye
@@ -45,7 +45,7 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019, 6:00PM)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -55,19 +55,19 @@ Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] do homework (by: no idea :-p)
+  [D][ ] do homework (by: Oct 15 2019)
 Now you have 4 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
-  [D][X] return book (by: Sunday)
+  [D][X] return book (by: Dec 02 2019, 6:00PM)
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] borrow book
-2.[D][X] return book (by: Sunday)
+2.[D][X] return book (by: Dec 02 2019, 6:00PM)
 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
-4.[D][ ] do homework (by: no idea :-p)
+4.[D][ ] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -202,8 +202,9 @@ ____________________________________________________________
 ```text
 todo anchor task
 deadline missing date /by
+deadline impossible date /by 2019-02-29
 list
-deadline submit report /by Friday
+deadline submit report /by 2019-12-06
 event missing end /from noon /to
 list
 event team sync /from noon /to 1pm
@@ -233,12 +234,15 @@ ____________________________________________________________
 The deadline's '/by' date is empty. Add a date or time so it can fly on schedule!
 ____________________________________________________________
 ____________________________________________________________
+I couldn't understand the deadline '2019-02-29'. Use yyyy-MM-dd, or d/M/yyyy HHmm when including a time!
+____________________________________________________________
+____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] anchor task
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] submit report (by: Friday)
+  [D][ ] submit report (by: Dec 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -247,7 +251,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] anchor task
-2.[D][ ] submit report (by: Friday)
+2.[D][ ] submit report (by: Dec 06 2019)
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
@@ -260,7 +264,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] anchor task
-2.[D][ ] submit report (by: Friday)
+2.[D][ ] submit report (by: Dec 06 2019)
 3.[E][ ] team sync (from: noon to: 1pm)
 ____________________________________________________________
 ____________________________________________________________
@@ -1071,7 +1075,7 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by June 6th
+deadline return book /by 2019-06-06
 event project meeting /from Aug 6th 2pm /to 4pm
 todo join sports club
 todo borrow book
@@ -1103,7 +1107,7 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -1127,7 +1131,7 @@ Nice! I've marked this task as done:
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
-  [D][X] return book (by: June 6th)
+  [D][X] return book (by: Jun 06 2019)
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
@@ -1136,7 +1140,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] read book
-2.[D][X] return book (by: June 6th)
+2.[D][X] return book (by: Jun 06 2019)
 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
 4.[T][X] join sports club
 5.[T][ ] borrow book
@@ -1149,7 +1153,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] read book
-2.[D][X] return book (by: June 6th)
+2.[D][X] return book (by: Jun 06 2019)
 3.[T][X] join sports club
 4.[T][ ] borrow book
 ____________________________________________________________
@@ -1224,7 +1228,7 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by June 6th
+deadline return book /by 2019-06-06
 event project meeting /from Aug 6th 2pm /to 4pm
 mark 1
 unmark 1
@@ -1252,7 +1256,7 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -1270,7 +1274,7 @@ OK, I've marked this task as not done yet:
 ____________________________________________________________
 ____________________________________________________________
 Noted. I've removed this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________

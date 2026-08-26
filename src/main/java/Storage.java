@@ -3,6 +3,9 @@ import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,12 +144,18 @@ public class Storage {
         }
 
         Task task;
-        if (type.equals("T")) {
-            task = new ToDo(fields.get(2));
-        } else if (type.equals("D")) {
-            task = new Deadline(fields.get(2), fields.get(3));
-        } else {
-            task = new Event(fields.get(2), fields.get(3), fields.get(4));
+        try {
+            if (type.equals("T")) {
+                task = new ToDo(fields.get(2));
+            } else if (type.equals("D") && fields.get(3).contains("T")) {
+                task = new Deadline(fields.get(2), LocalDateTime.parse(fields.get(3)));
+            } else if (type.equals("D")) {
+                task = new Deadline(fields.get(2), LocalDate.parse(fields.get(3)));
+            } else {
+                task = new Event(fields.get(2), fields.get(3), fields.get(4));
+            }
+        } catch (DateTimeParseException e) {
+            throw new StorageException("deadline date must use yyyy-MM-dd or ISO date-time format");
         }
 
         if (fields.get(1).equals("1")) {
