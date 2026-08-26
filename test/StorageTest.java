@@ -18,11 +18,14 @@ public class StorageTest {
         Files.createDirectories(dataFile.getParent());
         verifyValidRecords(dataFile);
         verifyMissingFile(Path.of("_temp", "missing-storage-test-data.txt"));
+        verifyMissingFolderCreation();
+        verifyAbsolutePathRejected(dataFile);
         verifyEscapedTextRoundTrip(Path.of("_temp", "a"));
         verifyMalformedRecords(dataFile);
         verifySaveFailure(Path.of("_temp", "storage-target-directory"));
 
-        System.out.println("[PASS] Storage handled valid, missing, escaped, malformed, and unwritable data");
+        System.out.println("[PASS] Storage handled relative paths, missing files and folders, "
+                + "valid, escaped, malformed, and unwritable data");
     }
 
     /** Verifies reconstruction of every supported task type and completion state. */
@@ -50,6 +53,30 @@ public class StorageTest {
     private static void verifyMissingFile(Path dataFile) throws Exception {
         Files.deleteIfExists(dataFile);
         require(new Storage(dataFile).load().isEmpty(), "A missing file should load an empty list");
+    }
+
+    /** Verifies that saving creates a missing relative data-folder hierarchy. */
+    private static void verifyMissingFolderCreation() throws Exception {
+        Path testRoot = Files.createTempDirectory(Path.of("_temp"), "missing-folder-");
+        Path dataFile = testRoot.resolve("data").resolve("nested").resolve("soar.txt");
+
+        Storage storage = new Storage(dataFile);
+        require(storage.load().isEmpty(), "A file in a missing folder should load an empty list");
+        storage.save(List.of(new ToDo("created with its folders")));
+
+        require(Files.isRegularFile(dataFile), "Saving did not create the missing data folders");
+        require(storage.load().size() == 1, "The task saved in a new folder could not be loaded");
+    }
+
+    /** Verifies that storage cannot be configured with an OS-specific absolute path. */
+    private static void verifyAbsolutePathRejected(Path relativePath) {
+        try {
+            new Storage(relativePath.toAbsolutePath());
+            throw new AssertionError("An absolute data path should be rejected");
+        } catch (IllegalArgumentException e) {
+            require(e.getMessage().contains("relative"),
+                    "Absolute-path rejection should explain the relative-path requirement");
+        }
     }
 
     /** Verifies that structural and line-breaking characters survive save and load. */

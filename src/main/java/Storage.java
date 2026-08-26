@@ -24,13 +24,16 @@ public class Storage {
     /**
      * Creates storage that uses a specific data file.
      *
-     * @param dataFile file from which tasks are loaded and to which they are saved
+     * @param dataFile relative file from which tasks are loaded and to which they are saved
      */
     public Storage(Path dataFile) {
         if (dataFile == null || dataFile.getFileName() == null) {
             throw new IllegalArgumentException("The data file path must name a file");
         }
-        this.dataFile = dataFile;
+        if (dataFile.isAbsolute()) {
+            throw new IllegalArgumentException("The data file path must be relative to the project folder");
+        }
+        this.dataFile = dataFile.normalize();
     }
 
     /**
