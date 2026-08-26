@@ -27,6 +27,12 @@ public class Event extends Task {
     }
 
     @Override
+    public String toDataString() {
+        return "E | " + getDataStatus() + " | " + Storage.escapeField(description)
+                + " | " + Storage.escapeField(from) + " | " + Storage.escapeField(to);
+    }
+
+    @Override
     public String toString() {
         return super.toString() + " (from: " + from + " to: " + to + ")";
     }

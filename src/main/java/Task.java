@@ -26,6 +26,31 @@ public abstract class Task {
     public abstract String getTypeIcon();
 
     /**
+     * Returns this task in the compact format used for persistent storage.
+     *
+     * @return one line that can be written to the task data file
+     */
+    public abstract String toDataString();
+
+    /**
+     * Returns {@code 1} for a completed task and {@code 0} otherwise.
+     *
+     * @return completion state in the storage format
+     */
+    protected String getDataStatus() {
+        return isDone ? "1" : "0";
+    }
+
+    /**
+     * Returns whether this task has been completed.
+     *
+     * @return {@code true} if the task is done
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
      * Returns the icon used to show this task's completion status.
      *
      * @return {@code X} if the task is done, or a space otherwise
