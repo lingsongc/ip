@@ -3,10 +3,12 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -16,9 +18,21 @@ public class Soar {
     /** Width of the line used to frame the chatbot's messages. */
     private static final int SEPARATOR_WIDTH = 60;
 
-    /** Accepted format for a deadline containing both a date and a time. */
-    private static final DateTimeFormatter DEADLINE_DATE_TIME_FORMAT =
-            DateTimeFormatter.ofPattern("d/M/uuuu HHmm").withResolverStyle(ResolverStyle.STRICT);
+    /** Accepted formats for deadlines containing only a date. */
+    private static final List<DateTimeFormatter> DEADLINE_DATE_FORMATS = List.of(
+            DateTimeFormatter.ISO_LOCAL_DATE,
+            DateTimeFormatter.ofPattern("d/M/uuuu").withResolverStyle(ResolverStyle.STRICT));
+
+    /** Accepted formats for deadlines containing both a date and a time. */
+    private static final List<DateTimeFormatter> DEADLINE_DATE_TIME_FORMATS = List.of(
+            DateTimeFormatter.ofPattern("d/M/uuuu HHmm").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm").withResolverStyle(ResolverStyle.STRICT),
+            new DateTimeFormatterBuilder()
+                    .parseCaseInsensitive()
+                    .appendPattern("d MMM uuuu h:mm a")
+                    .toFormatter(Locale.ENGLISH)
+                    .withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
     /** Message shown when a task-list change cannot be safely persisted. */
     private static final String SAVE_ERROR_MESSAGE =
@@ -220,15 +234,23 @@ public class Soar {
             throw new InvalidTaskFormatException(
                     "The deadline's '/by' date is empty. Add a date or time so it can fly on schedule!");
         }
-        try {
-            if (by.contains(" ")) {
-                return new Deadline(description, LocalDateTime.parse(by, DEADLINE_DATE_TIME_FORMAT));
+        for (DateTimeFormatter formatter : DEADLINE_DATE_TIME_FORMATS) {
+            try {
+                return new Deadline(description, LocalDateTime.parse(by, formatter));
+            } catch (DateTimeParseException ignored) {
+                // Try the next documented date-time format.
             }
-            return new Deadline(description, LocalDate.parse(by, DateTimeFormatter.ISO_LOCAL_DATE));
-        } catch (DateTimeParseException e) {
-            throw new InvalidTaskFormatException("I couldn't understand the deadline '" + by
-                    + "'. Use yyyy-MM-dd, or d/M/yyyy HHmm when including a time!");
         }
+        for (DateTimeFormatter formatter : DEADLINE_DATE_FORMATS) {
+            try {
+                return new Deadline(description, LocalDate.parse(by, formatter));
+            } catch (DateTimeParseException ignored) {
+                // Try the next documented date format.
+            }
+        }
+        throw new InvalidTaskFormatException("I couldn't understand the deadline '" + by
+                + "'. Use yyyy-MM-dd, d/M/yyyy, d/M/yyyy HHmm, yyyy-MM-dd HH:mm, "
+                + "d MMM yyyy h:mm a, or an ISO date-time!");
     }
 
     /**

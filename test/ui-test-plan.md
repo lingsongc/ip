@@ -234,7 +234,7 @@ ____________________________________________________________
 The deadline's '/by' date is empty. Add a date or time so it can fly on schedule!
 ____________________________________________________________
 ____________________________________________________________
-I couldn't understand the deadline '2019-02-29'. Use yyyy-MM-dd, or d/M/yyyy HHmm when including a time!
+I couldn't understand the deadline '2019-02-29'. Use yyyy-MM-dd, d/M/yyyy, d/M/yyyy HHmm, yyyy-MM-dd HH:mm, d MMM yyyy h:mm a, or an ISO date-time!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -1281,6 +1281,65 @@ ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] read book
 2.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-011 — Additional deadline date-time formats
+
+- Aim: Verify that day-first dates, ISO-style date-times, textual dates, and ISO date-times are parsed and displayed consistently.
+
+#### Inputs
+
+```text
+deadline day-first date /by 15/10/2019
+deadline spaced ISO time /by 2019-10-15 18:00
+deadline textual time /by 15 Oct 2019 6:00 PM
+deadline ISO date-time /by 2019-10-15T18:00
+list
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] day-first date (by: Oct 15 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] spaced ISO time (by: Oct 15 2019, 6:00PM)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] textual time (by: Oct 15 2019, 6:00PM)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] ISO date-time (by: Oct 15 2019, 6:00PM)
+Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[D][ ] day-first date (by: Oct 15 2019)
+2.[D][ ] spaced ISO time (by: Oct 15 2019, 6:00PM)
+3.[D][ ] textual time (by: Oct 15 2019, 6:00PM)
+4.[D][ ] ISO date-time (by: Oct 15 2019, 6:00PM)
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
