@@ -4,6 +4,7 @@
 public enum CommandType {
     BYE("bye", false),
     LIST("list", false),
+    DATE("date", true),
     MARK("mark", TaskAction.COMPLETE_FLIGHT),
     UNMARK("unmark", TaskAction.RETURN_TO_FLIGHT_PATH),
     DELETE("delete", TaskAction.SHOT_DOWN),

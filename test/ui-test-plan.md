@@ -120,7 +120,7 @@ ____________________________________________________________
 Your task list is an open sky right now. Add a task before using 'mark'!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -390,10 +390,10 @@ Got it. I've added this task:
 Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -404,14 +404,14 @@ Nice! I've marked this task as done:
   [T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -426,7 +426,7 @@ Here are the tasks in your list:
 1.[T][ ] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -1340,6 +1340,82 @@ Here are the tasks in your list:
 2.[D][ ] spaced ISO time (by: Oct 15 2019, 6:00PM)
 3.[D][ ] textual time (by: Oct 15 2019, 6:00PM)
 4.[D][ ] ISO date-time (by: Oct 15 2019, 6:00PM)
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-012 — Query deadlines and events by date
+
+- Aim: Verify that the date command accepts supported formats, keeps original task numbers, includes dated event ranges, and explains empty or invalid queries.
+
+#### Inputs
+
+```text
+todo background task
+deadline submit report /by 2019-10-15
+event workshop /from 2019-10-15 14:00 /to 2019-10-15 16:00
+event conference /from 2019-10-14T09:00 /to 2019-10-16T17:00
+event undated lunch /from noon /to 1pm
+date 15 Oct 2019 6:00 PM
+date 17/10/2019
+date
+date 2019-02-29
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] background task
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] submit report (by: Oct 15 2019)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] workshop (from: 2019-10-15 14:00 to: 2019-10-15 16:00)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] conference (from: 2019-10-14T09:00 to: 2019-10-16T17:00)
+Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] undated lunch (from: noon to: 1pm)
+Now you have 5 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the deadlines and events on Oct 15 2019:
+2.[D][ ] submit report (by: Oct 15 2019)
+3.[E][ ] workshop (from: 2019-10-15 14:00 to: 2019-10-15 16:00)
+4.[E][ ] conference (from: 2019-10-14T09:00 to: 2019-10-16T17:00)
+____________________________________________________________
+____________________________________________________________
+There are no deadlines or events on Oct 17 2019.
+____________________________________________________________
+____________________________________________________________
+Add a date after 'date' so I know which day's flight plan to show!
+____________________________________________________________
+____________________________________________________________
+I couldn't understand the date '2019-02-29'. Use one of the supported deadline date or date-time formats!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!

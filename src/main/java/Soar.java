@@ -1,11 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -18,21 +14,9 @@ public class Soar {
     /** Width of the line used to frame the chatbot's messages. */
     private static final int SEPARATOR_WIDTH = 60;
 
-    /** Accepted formats for deadlines containing only a date. */
-    private static final List<DateTimeFormatter> DEADLINE_DATE_FORMATS = List.of(
-            DateTimeFormatter.ISO_LOCAL_DATE,
-            DateTimeFormatter.ofPattern("d/M/uuuu").withResolverStyle(ResolverStyle.STRICT));
-
-    /** Accepted formats for deadlines containing both a date and a time. */
-    private static final List<DateTimeFormatter> DEADLINE_DATE_TIME_FORMATS = List.of(
-            DateTimeFormatter.ofPattern("d/M/uuuu HHmm").withResolverStyle(ResolverStyle.STRICT),
-            DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm").withResolverStyle(ResolverStyle.STRICT),
-            new DateTimeFormatterBuilder()
-                    .parseCaseInsensitive()
-                    .appendPattern("d MMM uuuu h:mm a")
-                    .toFormatter(Locale.ENGLISH)
-                    .withResolverStyle(ResolverStyle.STRICT),
-            DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    /** Format used when naming the requested date in query results. */
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
 
     /** Message shown when a task-list change cannot be safely persisted. */
     private static final String SAVE_ERROR_MESSAGE =
@@ -89,6 +73,8 @@ public class Soar {
                     for (int i = 0; i < tasks.size(); i++) {
                         System.out.println((i + 1) + "." + tasks.get(i));
                     }
+                } else if (commandType == CommandType.DATE) {
+                    printTasksOnDate(command, tasks);
                 } else if (commandType == CommandType.MARK) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task task = tasks.get(taskIndex);
@@ -234,23 +220,59 @@ public class Soar {
             throw new InvalidTaskFormatException(
                     "The deadline's '/by' date is empty. Add a date or time so it can fly on schedule!");
         }
-        for (DateTimeFormatter formatter : DEADLINE_DATE_TIME_FORMATS) {
-            try {
-                return new Deadline(description, LocalDateTime.parse(by, formatter));
-            } catch (DateTimeParseException ignored) {
-                // Try the next documented date-time format.
-            }
+        var dateTime = DateTimeParser.parseDateTime(by);
+        if (dateTime.isPresent()) {
+            return new Deadline(description, dateTime.get());
         }
-        for (DateTimeFormatter formatter : DEADLINE_DATE_FORMATS) {
-            try {
-                return new Deadline(description, LocalDate.parse(by, formatter));
-            } catch (DateTimeParseException ignored) {
-                // Try the next documented date format.
-            }
+        var date = DateTimeParser.parseDate(by);
+        if (date.isPresent()) {
+            return new Deadline(description, date.get());
         }
         throw new InvalidTaskFormatException("I couldn't understand the deadline '" + by
                 + "'. Use yyyy-MM-dd, d/M/yyyy, d/M/yyyy HHmm, yyyy-MM-dd HH:mm, "
                 + "d MMM yyyy h:mm a, or an ISO date-time!");
+    }
+
+    /**
+     * Prints deadlines and dated events occurring on a requested calendar date.
+     *
+     * @param input complete date command
+     * @param tasks current task list
+     * @throws InvalidTaskFormatException if the date is missing or unrecognized
+     */
+    private static void printTasksOnDate(String input, List<Task> tasks)
+            throws InvalidTaskFormatException {
+        String value = input.substring(CommandType.DATE.getCommandWord().length()).trim();
+        if (value.isEmpty()) {
+            throw new InvalidTaskFormatException(
+                    "Add a date after 'date' so I know which day's flight plan to show!");
+        }
+
+        var requestedDate = DateTimeParser.parseCalendarDate(value);
+        if (requestedDate.isEmpty()) {
+            throw new InvalidTaskFormatException("I couldn't understand the date '" + value
+                    + "'. Use one of the supported deadline date or date-time formats!");
+        }
+
+        LocalDate date = requestedDate.get();
+        String displayedDate = date.format(DISPLAY_DATE_FORMAT);
+        ArrayList<String> matches = new ArrayList<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            boolean matchesDate = task instanceof Deadline deadline
+                    && deadline.getBy().toLocalDate().equals(date);
+            matchesDate = matchesDate || task instanceof Event event && event.occursOn(date);
+            if (matchesDate) {
+                matches.add((i + 1) + "." + task);
+            }
+        }
+
+        if (matches.isEmpty()) {
+            System.out.println("There are no deadlines or events on " + displayedDate + ".");
+            return;
+        }
+        System.out.println("Here are the deadlines and events on " + displayedDate + ":");
+        matches.forEach(System.out::println);
     }
 
     /**
