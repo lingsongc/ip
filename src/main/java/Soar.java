@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,8 +14,8 @@ public class Soar {
      * Greets the user, stores tasks, lists or updates their status on request, and
      * exits when the user enters {@code bye}.
      *
-     * @param args command-line arguments; they are not used
-     * @throws IOException if the task data file cannot be written
+     * @param args optional first argument overrides the default task data file
+     * @throws IOException if the task data file cannot be read or written
      */
     public static void main(String[] args) throws IOException {
         String banner = " ____                    \n"
@@ -31,8 +32,8 @@ public class Soar {
         System.out.println(separator);
 
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
-        Storage storage = new Storage();
+        Storage storage = args.length == 0 ? new Storage() : new Storage(Path.of(args[0]));
+        ArrayList<Task> tasks = new ArrayList<>(storage.load());
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();

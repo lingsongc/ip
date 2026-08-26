@@ -2,8 +2,8 @@
 
 ## Configuration
 
-- Build command: `javac -d _temp/ui-test-classes src/main/java/*.java`
-- Run command: `java -cp _temp/ui-test-classes Soar`
+- Build command: `javac -d _temp/ui-test-classes src/main/java/*.java test/StorageTest.java && java -cp _temp/ui-test-classes StorageTest`
+- Run command: `powershell -NoProfile -Command "Remove-Item -LiteralPath '_temp/ui-test-data.txt' -Force -ErrorAction SilentlyContinue; java -cp _temp/ui-test-classes Soar _temp/ui-test-data.txt"`
 - Working directory: `.`
 - Timeout seconds: `10`
 - Comparison: `exact after normalizing CRLF and CR line endings to LF`
@@ -1218,7 +1218,7 @@ ____________________________________________________________
 
 ### TC-010 — Persist after every task-list change
 
-- Aim: Exercise add, mark, unmark, and delete changes whose final state must be saved to `data/soar.txt`.
+- Aim: Exercise add, mark, unmark, and delete changes whose final state must be saved to the configured data file.
 
 #### Inputs
 
