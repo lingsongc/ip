@@ -18,6 +18,6 @@ public class ToDo extends Task {
 
     @Override
     public String toDataString() {
-        return "T | " + getDataStatus() + " | " + description;
+        return "T | " + getDataStatus() + " | " + Storage.escapeField(description);
     }
 }

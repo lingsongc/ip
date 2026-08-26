@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -10,14 +11,17 @@ public class Soar {
     /** Width of the line used to frame the chatbot's messages. */
     private static final int SEPARATOR_WIDTH = 60;
 
+    /** Message shown when a task-list change cannot be safely persisted. */
+    private static final String SAVE_ERROR_MESSAGE =
+            "I couldn't save the task data, so that change was not kept. Please check the data file and try again.";
+
     /**
      * Greets the user, stores tasks, lists or updates their status on request, and
      * exits when the user enters {@code bye}.
      *
      * @param args optional first argument overrides the default task data file
-     * @throws IOException if the task data file cannot be read or written
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         String banner = " ____                    \n"
                 + "/ ___|  ___   __ _ _ __  \n"
                 + "\\___ \\ / _ \\ / _` | '__| \n"
@@ -32,8 +36,17 @@ public class Soar {
         System.out.println(separator);
 
         Scanner scanner = new Scanner(System.in);
-        Storage storage = args.length == 0 ? new Storage() : new Storage(Path.of(args[0]));
-        ArrayList<Task> tasks = new ArrayList<>(storage.load());
+        Storage storage;
+        ArrayList<Task> tasks;
+        try {
+            storage = args.length == 0 ? new Storage() : new Storage(Path.of(args[0]));
+            tasks = new ArrayList<>(storage.load());
+        } catch (IOException | StorageException | IllegalArgumentException e) {
+            System.out.println("I couldn't load the task data safely: " + e.getMessage());
+            System.out.println("Please repair or move the data file, then restart Soar.");
+            System.out.println(separator);
+            return;
+        }
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
@@ -55,43 +68,83 @@ public class Soar {
                     }
                 } else if (commandType == CommandType.MARK) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
-                    tasks.get(taskIndex).markAsDone();
-                    storage.save(tasks);
+                    Task task = tasks.get(taskIndex);
+                    boolean wasDone = task.isDone();
+                    task.markAsDone();
+                    saveChange(storage, tasks, () -> restoreTaskState(task, wasDone));
                     System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasks.get(taskIndex));
+                    System.out.println("  " + task);
                 } else if (commandType == CommandType.UNMARK) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
-                    tasks.get(taskIndex).markAsNotDone();
-                    storage.save(tasks);
+                    Task task = tasks.get(taskIndex);
+                    boolean wasDone = task.isDone();
+                    task.markAsNotDone();
+                    saveChange(storage, tasks, () -> restoreTaskState(task, wasDone));
                     System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks.get(taskIndex));
+                    System.out.println("  " + task);
                 } else if (commandType == CommandType.DELETE) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
-                    storage.save(tasks);
+                    saveChange(storage, tasks, () -> tasks.add(taskIndex, removedTask));
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
                 } else if (commandType == CommandType.TODO) {
                     String description = command.substring(commandType.getCommandWord().length()).trim();
                     requireDescription(description, commandType.getCommandWord());
-                    tasks.add(new ToDo(description));
-                    storage.save(tasks);
-                    printTaskAdded(tasks.getLast(), tasks.size());
+                    addTask(new ToDo(description), tasks, storage);
                 } else if (commandType == CommandType.DEADLINE) {
-                    tasks.add(parseDeadline(command));
-                    storage.save(tasks);
-                    printTaskAdded(tasks.getLast(), tasks.size());
+                    addTask(parseDeadline(command), tasks, storage);
                 } else if (commandType == CommandType.EVENT) {
-                    tasks.add(parseEvent(command));
-                    storage.save(tasks);
-                    printTaskAdded(tasks.getLast(), tasks.size());
+                    addTask(parseEvent(command), tasks, storage);
                 }
             } catch (SoarException e) {
                 System.out.println(e.getMessage());
             }
 
             System.out.println(separator);
+        }
+    }
+
+    /**
+     * Adds and persists a task, rolling back the list if saving fails.
+     *
+     * @param task task to add
+     * @param tasks current task list
+     * @param storage persistence service
+     * @throws StorageException if the updated list cannot be saved
+     */
+    private static void addTask(Task task, ArrayList<Task> tasks, Storage storage)
+            throws StorageException {
+        tasks.add(task);
+        saveChange(storage, tasks, () -> tasks.remove(tasks.size() - 1));
+        printTaskAdded(task, tasks.size());
+    }
+
+    /**
+     * Saves a changed list and reverses the in-memory change on failure.
+     *
+     * @param storage persistence service
+     * @param tasks changed task list
+     * @param rollback action that restores the list's previous state
+     * @throws StorageException if the changed list cannot be saved
+     */
+    private static void saveChange(Storage storage, List<Task> tasks, Runnable rollback)
+            throws StorageException {
+        try {
+            storage.save(tasks);
+        } catch (IOException | RuntimeException e) {
+            rollback.run();
+            throw new StorageException(SAVE_ERROR_MESSAGE);
+        }
+    }
+
+    /** Restores a task's completion state after a failed save. */
+    private static void restoreTaskState(Task task, boolean wasDone) {
+        if (wasDone) {
+            task.markAsDone();
+        } else {
+            task.markAsNotDone();
         }
     }
 

@@ -1,5 +1,6 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +16,17 @@ public class StorageTest {
     public static void main(String[] args) throws Exception {
         Path dataFile = Path.of("_temp", "storage-test-data.txt");
         Files.createDirectories(dataFile.getParent());
+        verifyValidRecords(dataFile);
+        verifyMissingFile(Path.of("_temp", "missing-storage-test-data.txt"));
+        verifyEscapedTextRoundTrip(Path.of("_temp", "a"));
+        verifyMalformedRecords(dataFile);
+        verifySaveFailure(Path.of("_temp", "storage-target-directory"));
+
+        System.out.println("[PASS] Storage handled valid, missing, escaped, malformed, and unwritable data");
+    }
+
+    /** Verifies reconstruction of every supported task type and completion state. */
+    private static void verifyValidRecords(Path dataFile) throws Exception {
         Files.write(dataFile, List.of(
                 "T | 1 | read book",
                 "D | 0 | return book | June 6th",
@@ -32,8 +44,72 @@ public class StorageTest {
         require(tasks.get(2).toString().equals(
                 "[E][X] project meeting (from: Aug 6th 2pm to: 4pm)"),
                 "Event data was not restored");
+    }
 
-        System.out.println("[PASS] Storage loaded todo, deadline, and event data");
+    /** Verifies that a first run without a data file starts with an empty list. */
+    private static void verifyMissingFile(Path dataFile) throws Exception {
+        Files.deleteIfExists(dataFile);
+        require(new Storage(dataFile).load().isEmpty(), "A missing file should load an empty list");
+    }
+
+    /** Verifies that structural and line-breaking characters survive save and load. */
+    private static void verifyEscapedTextRoundTrip(Path dataFile) throws Exception {
+        ArrayList<Task> original = new ArrayList<>();
+        original.add(new ToDo("pipe | slash \\ newline\ncarriage\rreturn"));
+        original.add(new Deadline("submit | report", "C:\\temp\\due | Friday"));
+        original.add(new Event("team sync", "room | one", "room \\ two"));
+        original.get(1).markAsDone();
+
+        Storage storage = new Storage(dataFile);
+        storage.save(original);
+        List<Task> loaded = storage.load();
+
+        require(loaded.size() == original.size(), "Round-trip changed the task count");
+        for (int i = 0; i < original.size(); i++) {
+            require(loaded.get(i).toString().equals(original.get(i).toString()),
+                    "Round-trip changed task " + (i + 1));
+        }
+    }
+
+    /** Verifies that malformed records fail with their exact line number. */
+    private static void verifyMalformedRecords(Path dataFile) throws Exception {
+        expectInvalid(dataFile, List.of(""), "blank records");
+        expectInvalid(dataFile, List.of("X | 0 | unknown"), "unknown task type");
+        expectInvalid(dataFile, List.of("T | 2 | bad status"), "completion status");
+        expectInvalid(dataFile, List.of("D | 0 | missing date"), "requires 4 fields");
+        expectInvalid(dataFile, List.of("T | 0 | task | extra"), "requires 3 fields");
+        expectInvalid(dataFile, List.of("T | 0 |  "), "must not be empty");
+        expectInvalid(dataFile, List.of("T | 0 | bad\\qescape"), "unsupported escape");
+        expectInvalid(dataFile, List.of("T | 0 | valid", "E | 0 | incomplete"), "line 2");
+    }
+
+    /** Verifies that a failed replacement is reported and its temporary file is cleaned up. */
+    private static void verifySaveFailure(Path dataFile) throws Exception {
+        Files.createDirectories(dataFile);
+        try {
+            new Storage(dataFile).save(List.of(new ToDo("cannot save here")));
+            throw new AssertionError("Saving over a directory should fail");
+        } catch (java.io.IOException expected) {
+            try (var files = Files.list(dataFile.getParent())) {
+                require(files.noneMatch(path -> path.getFileName().toString()
+                                .startsWith(dataFile.getFileName().toString())
+                                && path.getFileName().toString().endsWith(".tmp")),
+                        "A failed save left a temporary file behind");
+            }
+        }
+    }
+
+    /** Writes malformed lines and verifies that loading rejects them clearly. */
+    private static void expectInvalid(Path dataFile, List<String> lines, String expectedMessage)
+            throws Exception {
+        Files.write(dataFile, lines);
+        try {
+            new Storage(dataFile).load();
+            throw new AssertionError("Expected malformed data to be rejected: " + lines);
+        } catch (StorageException e) {
+            require(e.getMessage().contains(expectedMessage),
+                    "Unexpected malformed-data message: " + e.getMessage());
+        }
     }
 
     /**

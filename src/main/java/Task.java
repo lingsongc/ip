@@ -42,6 +42,15 @@ public abstract class Task {
     }
 
     /**
+     * Returns whether this task has been completed.
+     *
+     * @return {@code true} if the task is done
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
      * Returns the icon used to show this task's completion status.
      *
      * @return {@code X} if the task is done, or a space otherwise
