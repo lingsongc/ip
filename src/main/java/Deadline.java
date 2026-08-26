@@ -22,6 +22,11 @@ public class Deadline extends Task {
     }
 
     @Override
+    public String toDataString() {
+        return "D | " + getDataStatus() + " | " + description + " | " + by;
+    }
+
+    @Override
     public String toString() {
         return super.toString() + " (by: " + by + ")";
     }

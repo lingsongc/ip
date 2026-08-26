@@ -1215,3 +1215,70 @@ ____________________________________________________________
 Bye! Always soar towards your goals!
 ____________________________________________________________
 ```
+
+### TC-010 — Persist after every task-list change
+
+- Aim: Exercise add, mark, unmark, and delete changes whose final state must be saved to `data/soar.txt`.
+
+#### Inputs
+
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+mark 1
+unmark 1
+delete 2
+list
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: June 6th)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] read book
+____________________________________________________________
+____________________________________________________________
+OK, I've marked this task as not done yet:
+  [T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Noted. I've removed this task:
+  [D][ ] return book (by: June 6th)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] read book
+2.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```

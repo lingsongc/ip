@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,8 +14,9 @@ public class Soar {
      * exits when the user enters {@code bye}.
      *
      * @param args command-line arguments; they are not used
+     * @throws IOException if the task data file cannot be written
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String banner = " ____                    \n"
                 + "/ ___|  ___   __ _ _ __  \n"
                 + "\\___ \\ / _ \\ / _` | '__| \n"
@@ -30,6 +32,7 @@ public class Soar {
 
         Scanner scanner = new Scanner(System.in);
         ArrayList<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage();
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
@@ -52,16 +55,19 @@ public class Soar {
                 } else if (commandType == CommandType.MARK) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     tasks.get(taskIndex).markAsDone();
+                    storage.save(tasks);
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks.get(taskIndex));
                 } else if (commandType == CommandType.UNMARK) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
+                    storage.save(tasks);
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks.get(taskIndex));
                 } else if (commandType == CommandType.DELETE) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
+                    storage.save(tasks);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -69,12 +75,15 @@ public class Soar {
                     String description = command.substring(commandType.getCommandWord().length()).trim();
                     requireDescription(description, commandType.getCommandWord());
                     tasks.add(new ToDo(description));
+                    storage.save(tasks);
                     printTaskAdded(tasks.getLast(), tasks.size());
                 } else if (commandType == CommandType.DEADLINE) {
                     tasks.add(parseDeadline(command));
+                    storage.save(tasks);
                     printTaskAdded(tasks.getLast(), tasks.size());
                 } else if (commandType == CommandType.EVENT) {
                     tasks.add(parseEvent(command));
+                    storage.save(tasks);
                     printTaskAdded(tasks.getLast(), tasks.size());
                 }
             } catch (SoarException e) {
