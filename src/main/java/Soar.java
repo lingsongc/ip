@@ -36,14 +36,17 @@ public class Soar {
             return;
         }
 
-        while (ui.hasNextCommand()) {
+        boolean isExit = false;
+        while (!isExit && ui.hasNextCommand()) {
             String command = ui.readCommand();
             try {
                 CommandType commandType = Parser.parseCommand(command);
 
                 if (commandType == CommandType.BYE) {
-                    ui.showGoodbye();
-                    break;
+                    Command exitCommand = new ExitCommand();
+                    exitCommand.execute(tasks, ui, storage);
+                    isExit = exitCommand.isExit();
+                    continue;
                 }
 
                 if (commandType == CommandType.LIST) {
