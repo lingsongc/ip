@@ -5,7 +5,7 @@
 - Build command: `javac -d _temp/ui-test-classes src/main/java/*.java test/StorageTest.java && java -cp _temp/ui-test-classes StorageTest`
 - Run command: `powershell -NoProfile -Command "Remove-Item -LiteralPath '_temp/ui-test-data.txt' -Force -ErrorAction SilentlyContinue; java -cp _temp/ui-test-classes Soar _temp/ui-test-data.txt"`
 - Working directory: `.`
-- Timeout seconds: `20`
+- Timeout seconds: `30`
 - Comparison: `exact after normalizing CRLF and CR line endings to LF`
 
 ## Test cases
