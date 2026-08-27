@@ -42,16 +42,18 @@ public class Soar {
             try {
                 CommandType commandType = Parser.parseCommand(command);
 
-                if (commandType == CommandType.BYE) {
-                    Command exitCommand = new ExitCommand();
-                    exitCommand.execute(tasks, ui, storage);
-                    isExit = exitCommand.isExit();
+                Command executableCommand = switch (commandType) {
+                case BYE -> new ExitCommand();
+                case LIST -> new ListCommand();
+                default -> null;
+                };
+                if (executableCommand != null) {
+                    executableCommand.execute(tasks, ui, storage);
+                    isExit = executableCommand.isExit();
                     continue;
                 }
 
-                if (commandType == CommandType.LIST) {
-                    ui.showTaskList(tasks.asList());
-                } else if (commandType == CommandType.DATE) {
+                if (commandType == CommandType.DATE) {
                     showTasksOnDate(command, tasks, ui);
                 } else if (commandType == CommandType.MARK) {
                     int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
