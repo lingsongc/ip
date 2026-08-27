@@ -18,9 +18,9 @@
 
 ```text
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2/12/2019 1800
 event project meeting /from Mon 2pm /to 4pm
-deadline do homework /by no idea :-p
+deadline do homework /by 2019-10-15
 mark 2
 list
 bye
@@ -45,7 +45,7 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 02 2019, 6:00PM)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -55,19 +55,19 @@ Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] do homework (by: no idea :-p)
+  [D][ ] do homework (by: Oct 15 2019)
 Now you have 4 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
-  [D][X] return book (by: Sunday)
+  [D][X] return book (by: Dec 02 2019, 6:00PM)
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] borrow book
-2.[D][X] return book (by: Sunday)
+2.[D][X] return book (by: Dec 02 2019, 6:00PM)
 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
-4.[D][ ] do homework (by: no idea :-p)
+4.[D][ ] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -120,7 +120,7 @@ ____________________________________________________________
 Your task list is an open sky right now. Add a task before using 'mark'!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -202,8 +202,9 @@ ____________________________________________________________
 ```text
 todo anchor task
 deadline missing date /by
+deadline impossible date /by 2019-02-29
 list
-deadline submit report /by Friday
+deadline submit report /by 2019-12-06
 event missing end /from noon /to
 list
 event team sync /from noon /to 1pm
@@ -233,12 +234,15 @@ ____________________________________________________________
 The deadline's '/by' date is empty. Add a date or time so it can fly on schedule!
 ____________________________________________________________
 ____________________________________________________________
+I couldn't understand the deadline '2019-02-29'. Use yyyy-MM-dd, d/M/yyyy, d/M/yyyy HHmm, yyyy-MM-dd HH:mm, d MMM yyyy h:mm a, or an ISO date-time!
+____________________________________________________________
+____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] anchor task
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] submit report (by: Friday)
+  [D][ ] submit report (by: Dec 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -247,7 +251,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] anchor task
-2.[D][ ] submit report (by: Friday)
+2.[D][ ] submit report (by: Dec 06 2019)
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
@@ -260,7 +264,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] anchor task
-2.[D][ ] submit report (by: Friday)
+2.[D][ ] submit report (by: Dec 06 2019)
 3.[E][ ] team sync (from: noon to: 1pm)
 ____________________________________________________________
 ____________________________________________________________
@@ -386,10 +390,10 @@ Got it. I've added this task:
 Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -400,14 +404,14 @@ Nice! I've marked this task as done:
   [T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -422,7 +426,7 @@ Here are the tasks in your list:
 1.[T][ ] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -1071,7 +1075,7 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by June 6th
+deadline return book /by 2019-06-06
 event project meeting /from Aug 6th 2pm /to 4pm
 todo join sports club
 todo borrow book
@@ -1103,7 +1107,7 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -1127,7 +1131,7 @@ Nice! I've marked this task as done:
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
-  [D][X] return book (by: June 6th)
+  [D][X] return book (by: Jun 06 2019)
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
@@ -1136,7 +1140,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] read book
-2.[D][X] return book (by: June 6th)
+2.[D][X] return book (by: Jun 06 2019)
 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
 4.[T][X] join sports club
 5.[T][ ] borrow book
@@ -1149,7 +1153,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] read book
-2.[D][X] return book (by: June 6th)
+2.[D][X] return book (by: Jun 06 2019)
 3.[T][X] join sports club
 4.[T][ ] borrow book
 ____________________________________________________________
@@ -1224,7 +1228,7 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by June 6th
+deadline return book /by 2019-06-06
 event project meeting /from Aug 6th 2pm /to 4pm
 mark 1
 unmark 1
@@ -1252,7 +1256,7 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -1270,13 +1274,148 @@ OK, I've marked this task as not done yet:
 ____________________________________________________________
 ____________________________________________________________
 Noted. I've removed this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] read book
 2.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-011 — Additional deadline date-time formats
+
+- Aim: Verify that day-first dates, ISO-style date-times, textual dates, and ISO date-times are parsed and displayed consistently.
+
+#### Inputs
+
+```text
+deadline day-first date /by 15/10/2019
+deadline spaced ISO time /by 2019-10-15 18:00
+deadline textual time /by 15 Oct 2019 6:00 PM
+deadline ISO date-time /by 2019-10-15T18:00
+list
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] day-first date (by: Oct 15 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] spaced ISO time (by: Oct 15 2019, 6:00PM)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] textual time (by: Oct 15 2019, 6:00PM)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] ISO date-time (by: Oct 15 2019, 6:00PM)
+Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[D][ ] day-first date (by: Oct 15 2019)
+2.[D][ ] spaced ISO time (by: Oct 15 2019, 6:00PM)
+3.[D][ ] textual time (by: Oct 15 2019, 6:00PM)
+4.[D][ ] ISO date-time (by: Oct 15 2019, 6:00PM)
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-012 — Query deadlines and events by date
+
+- Aim: Verify that the date command accepts supported formats, keeps original task numbers, includes dated event ranges, and explains empty or invalid queries.
+
+#### Inputs
+
+```text
+todo background task
+deadline submit report /by 2019-10-15
+event workshop /from 2019-10-15 14:00 /to 2019-10-15 16:00
+event conference /from 2019-10-14T09:00 /to 2019-10-16T17:00
+event undated lunch /from noon /to 1pm
+date 15 Oct 2019 6:00 PM
+date 17/10/2019
+date
+date 2019-02-29
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] background task
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] submit report (by: Oct 15 2019)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] workshop (from: 2019-10-15 14:00 to: 2019-10-15 16:00)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] conference (from: 2019-10-14T09:00 to: 2019-10-16T17:00)
+Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] undated lunch (from: noon to: 1pm)
+Now you have 5 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the deadlines and events on Oct 15 2019:
+2.[D][ ] submit report (by: Oct 15 2019)
+3.[E][ ] workshop (from: 2019-10-15 14:00 to: 2019-10-15 16:00)
+4.[E][ ] conference (from: 2019-10-14T09:00 to: 2019-10-16T17:00)
+____________________________________________________________
+____________________________________________________________
+There are no deadlines or events on Oct 17 2019.
+____________________________________________________________
+____________________________________________________________
+Add a date after 'date' so I know which day's flight plan to show!
+____________________________________________________________
+____________________________________________________________
+I couldn't understand the date '2019-02-29'. Use one of the supported deadline date or date-time formats!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
