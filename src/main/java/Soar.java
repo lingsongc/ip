@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,10 +27,10 @@ public class Soar {
         Ui ui = new Ui();
         ui.showWelcome();
         Storage storage;
-        ArrayList<Task> tasks;
+        TaskList tasks;
         try {
             storage = args.length == 0 ? new Storage() : new Storage(Path.of(args[0]));
-            tasks = new ArrayList<>(storage.load());
+            tasks = new TaskList(storage.load());
         } catch (IOException | StorageException | IllegalArgumentException e) {
             ui.showLoadingError(e.getMessage());
             return;
@@ -48,27 +47,28 @@ public class Soar {
                 }
 
                 if (commandType == CommandType.LIST) {
-                    ui.showTaskList(tasks);
+                    ui.showTaskList(tasks.asList());
                 } else if (commandType == CommandType.DATE) {
                     showTasksOnDate(command, tasks, ui);
                 } else if (commandType == CommandType.MARK) {
                     int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
                     Task task = tasks.get(taskIndex);
                     boolean wasDone = task.isDone();
-                    task.markAsDone();
-                    saveChange(storage, tasks, () -> restoreTaskState(task, wasDone));
+                    tasks.mark(taskIndex);
+                    saveChange(storage, tasks, () -> tasks.restoreCompletion(taskIndex, wasDone));
                     ui.showTaskMarked(task, true);
                 } else if (commandType == CommandType.UNMARK) {
                     int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
                     Task task = tasks.get(taskIndex);
                     boolean wasDone = task.isDone();
-                    task.markAsNotDone();
-                    saveChange(storage, tasks, () -> restoreTaskState(task, wasDone));
+                    tasks.unmark(taskIndex);
+                    saveChange(storage, tasks, () -> tasks.restoreCompletion(taskIndex, wasDone));
                     ui.showTaskMarked(task, false);
                 } else if (commandType == CommandType.DELETE) {
                     int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    Task removedTask = tasks.remove(taskIndex);
-                    saveChange(storage, tasks, () -> tasks.add(taskIndex, removedTask));
+                    Task removedTask = tasks.delete(taskIndex);
+                    saveChange(storage, tasks,
+                            () -> tasks.restoreDeletedTask(taskIndex, removedTask));
                     ui.showTaskDeleted(removedTask, tasks.size());
                 } else if (commandType == CommandType.TODO
                         || commandType == CommandType.DEADLINE
@@ -90,10 +90,10 @@ public class Soar {
      * @param ui user interface that presents the confirmation
      * @throws StorageException if the updated list cannot be saved
      */
-    private static void addTask(Task task, ArrayList<Task> tasks, Storage storage, Ui ui)
+    private static void addTask(Task task, TaskList tasks, Storage storage, Ui ui)
             throws StorageException {
         tasks.add(task);
-        saveChange(storage, tasks, () -> tasks.remove(tasks.size() - 1));
+        saveChange(storage, tasks, () -> tasks.delete(tasks.size() - 1));
         ui.showTaskAdded(task, tasks.size());
     }
 
@@ -105,22 +105,13 @@ public class Soar {
      * @param rollback action that restores the list's previous state
      * @throws StorageException if the changed list cannot be saved
      */
-    private static void saveChange(Storage storage, List<Task> tasks, Runnable rollback)
+    private static void saveChange(Storage storage, TaskList tasks, Runnable rollback)
             throws StorageException {
         try {
-            storage.save(tasks);
+            storage.save(tasks.asList());
         } catch (IOException | RuntimeException e) {
             rollback.run();
             throw new StorageException(SAVE_ERROR_MESSAGE);
-        }
-    }
-
-    /** Restores a task's completion state after a failed save. */
-    private static void restoreTaskState(Task task, boolean wasDone) {
-        if (wasDone) {
-            task.markAsDone();
-        } else {
-            task.markAsNotDone();
         }
     }
 
@@ -132,20 +123,13 @@ public class Soar {
      * @param ui user interface that presents the matching tasks
      * @throws InvalidTaskFormatException if the date is missing or unrecognized
      */
-    private static void showTasksOnDate(String input, List<Task> tasks, Ui ui)
+    private static void showTasksOnDate(String input, TaskList tasks, Ui ui)
             throws InvalidTaskFormatException {
         LocalDate date = Parser.parseDate(input);
         String displayedDate = date.format(DISPLAY_DATE_FORMAT);
-        ArrayList<String> matches = new ArrayList<>();
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            boolean matchesDate = task instanceof Deadline deadline
-                    && deadline.getBy().toLocalDate().equals(date);
-            matchesDate = matchesDate || task instanceof Event event && event.occursOn(date);
-            if (matchesDate) {
-                matches.add((i + 1) + "." + task);
-            }
-        }
+        List<String> matches = tasks.findIndicesOn(date).stream()
+                .map(index -> (index + 1) + "." + tasks.get(index))
+                .toList();
 
         ui.showTasksOnDate(displayedDate, matches);
     }

@@ -2,10 +2,10 @@
 
 ## Configuration
 
-- Build command: `javac -d _temp/ui-test-classes src/main/java/*.java test/StorageTest.java && java -cp _temp/ui-test-classes StorageTest`
-- Run command: `powershell -NoProfile -Command "Remove-Item -LiteralPath '_temp/ui-test-data.txt' -Force -ErrorAction SilentlyContinue; java -cp _temp/ui-test-classes Soar _temp/ui-test-data.txt"`
+- Build command: `javac -d _temp/ui-test-classes src/main/java/*.java test/StorageTest.java test/TaskListTest.java && java -cp _temp/ui-test-classes StorageTest && java -cp _temp/ui-test-classes TaskListTest`
+- Run command: `powershell -NoProfile -ExecutionPolicy Bypass -File test/run-ui-test.ps1`
 - Working directory: `.`
-- Timeout seconds: `30`
+- Timeout seconds: `60`
 - Comparison: `exact after normalizing CRLF and CR line endings to LF`
 
 ## Test cases
