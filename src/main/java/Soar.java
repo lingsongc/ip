@@ -5,15 +5,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
 
 /**
  * Starts the Soar chatbot application.
  */
 public class Soar {
-    /** Width of the line used to frame the chatbot's messages. */
-    private static final int SEPARATOR_WIDTH = 60;
-
     /** Format used when naming the requested date in query results. */
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
@@ -29,89 +25,63 @@ public class Soar {
      * @param args optional first argument overrides the default task data file
      */
     public static void main(String[] args) {
-        String banner = " ____                    \n"
-                + "/ ___|  ___   __ _ _ __  \n"
-                + "\\___ \\ / _ \\ / _` | '__| \n"
-                + " ___) | (_) | (_| | |    \n"
-                + "|____/ \\___/ \\__,_|_|    ";
-        String separator = "_".repeat(SEPARATOR_WIDTH);
-
-        System.out.println(separator);
-        System.out.println(banner);
-        System.out.println("Hey there! I'm Soar, your upbeat little sidekick!");
-        System.out.println("What exciting thing can I help you tackle today?");
-        System.out.println(separator);
-
-        Scanner scanner = new Scanner(System.in);
+        Ui ui = new Ui();
+        ui.showWelcome();
         Storage storage;
         ArrayList<Task> tasks;
         try {
             storage = args.length == 0 ? new Storage() : new Storage(Path.of(args[0]));
             tasks = new ArrayList<>(storage.load());
         } catch (IOException | StorageException | IllegalArgumentException e) {
-            System.out.println("I couldn't load the task data safely: " + e.getMessage());
-            System.out.println("Please repair or move the data file, then restart Soar.");
-            System.out.println(separator);
+            ui.showLoadingError(e.getMessage());
             return;
         }
 
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
-            System.out.println(separator);
-
+        while (ui.hasNextCommand()) {
+            String command = ui.readCommand();
             try {
                 CommandType commandType = CommandType.fromInput(command);
 
                 if (commandType == CommandType.BYE) {
-                    System.out.println("Bye! Always soar towards your goals!");
-                    System.out.println(separator);
+                    ui.showGoodbye();
                     break;
                 }
 
                 if (commandType == CommandType.LIST) {
-                    System.out.println("Here are the tasks in your list:");
-                    for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println((i + 1) + "." + tasks.get(i));
-                    }
+                    ui.showTaskList(tasks);
                 } else if (commandType == CommandType.DATE) {
-                    printTasksOnDate(command, tasks);
+                    showTasksOnDate(command, tasks, ui);
                 } else if (commandType == CommandType.MARK) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task task = tasks.get(taskIndex);
                     boolean wasDone = task.isDone();
                     task.markAsDone();
                     saveChange(storage, tasks, () -> restoreTaskState(task, wasDone));
-                    System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + task);
+                    ui.showTaskMarked(task, true);
                 } else if (commandType == CommandType.UNMARK) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task task = tasks.get(taskIndex);
                     boolean wasDone = task.isDone();
                     task.markAsNotDone();
                     saveChange(storage, tasks, () -> restoreTaskState(task, wasDone));
-                    System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + task);
+                    ui.showTaskMarked(task, false);
                 } else if (commandType == CommandType.DELETE) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
                     saveChange(storage, tasks, () -> tasks.add(taskIndex, removedTask));
-                    System.out.println("Noted. I've removed this task:");
-                    System.out.println("  " + removedTask);
-                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+                    ui.showTaskDeleted(removedTask, tasks.size());
                 } else if (commandType == CommandType.TODO) {
                     String description = command.substring(commandType.getCommandWord().length()).trim();
                     requireDescription(description, commandType.getCommandWord());
-                    addTask(new ToDo(description), tasks, storage);
+                    addTask(new ToDo(description), tasks, storage, ui);
                 } else if (commandType == CommandType.DEADLINE) {
-                    addTask(parseDeadline(command), tasks, storage);
+                    addTask(parseDeadline(command), tasks, storage, ui);
                 } else if (commandType == CommandType.EVENT) {
-                    addTask(parseEvent(command), tasks, storage);
+                    addTask(parseEvent(command), tasks, storage, ui);
                 }
             } catch (SoarException e) {
-                System.out.println(e.getMessage());
+                ui.showError(e.getMessage());
             }
-
-            System.out.println(separator);
         }
     }
 
@@ -121,13 +91,14 @@ public class Soar {
      * @param task task to add
      * @param tasks current task list
      * @param storage persistence service
+     * @param ui user interface that presents the confirmation
      * @throws StorageException if the updated list cannot be saved
      */
-    private static void addTask(Task task, ArrayList<Task> tasks, Storage storage)
+    private static void addTask(Task task, ArrayList<Task> tasks, Storage storage, Ui ui)
             throws StorageException {
         tasks.add(task);
         saveChange(storage, tasks, () -> tasks.remove(tasks.size() - 1));
-        printTaskAdded(task, tasks.size());
+        ui.showTaskAdded(task, tasks.size());
     }
 
     /**
@@ -238,9 +209,10 @@ public class Soar {
      *
      * @param input complete date command
      * @param tasks current task list
+     * @param ui user interface that presents the matching tasks
      * @throws InvalidTaskFormatException if the date is missing or unrecognized
      */
-    private static void printTasksOnDate(String input, List<Task> tasks)
+    private static void showTasksOnDate(String input, List<Task> tasks, Ui ui)
             throws InvalidTaskFormatException {
         String value = input.substring(CommandType.DATE.getCommandWord().length()).trim();
         if (value.isEmpty()) {
@@ -267,12 +239,7 @@ public class Soar {
             }
         }
 
-        if (matches.isEmpty()) {
-            System.out.println("There are no deadlines or events on " + displayedDate + ".");
-            return;
-        }
-        System.out.println("Here are the deadlines and events on " + displayedDate + ":");
-        matches.forEach(System.out::println);
+        ui.showTasksOnDate(displayedDate, matches);
     }
 
     /**
@@ -316,15 +283,4 @@ public class Soar {
         }
     }
 
-    /**
-     * Prints the shared confirmation shown after adding any task type.
-     *
-     * @param task task that was added
-     * @param taskCount updated number of stored tasks
-     */
-    private static void printTaskAdded(Task task, int taskCount) {
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-    }
 }
