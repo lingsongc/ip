@@ -98,7 +98,11 @@ public class Ui {
         showFramed(lines);
     }
 
-    /** Shows tasks whose descriptions match a find command. */
+    /**
+     * Shows tasks whose descriptions match a find command.
+     *
+     * @param tasks Tasks that match the find result
+     */
     public void showMatchingTasks(List<Task> tasks) {
         ArrayList<String> lines = new ArrayList<>();
         lines.add("Here are the matching tasks in your list:");
