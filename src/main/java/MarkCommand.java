@@ -2,20 +2,21 @@
  * Marks one selected task as completed and persists the change.
  */
 public class MarkCommand extends Command {
-    /** Zero-based index of the task to mark. */
-    private final int taskIndex;
+    /** One-based task number entered by the user. */
+    private final int taskNumber;
 
     /**
-     * Creates a command for a validated task index.
+     * Creates a command for a parsed task number.
      *
-     * @param taskIndex zero-based index of the task to mark
+     * @param taskNumber one-based number of the task to mark
      */
-    public MarkCommand(int taskIndex) {
-        this.taskIndex = taskIndex;
+    public MarkCommand(int taskNumber) {
+        this.taskNumber = taskNumber;
     }
 
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) throws StorageException {
+    public void execute(TaskList tasks, Ui ui, Storage storage) throws SoarException {
+        int taskIndex = requireTaskIndex(taskNumber, tasks, CommandType.MARK);
         Task task = tasks.get(taskIndex);
         boolean wasDone = task.isDone();
         tasks.mark(taskIndex);

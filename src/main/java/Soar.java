@@ -28,7 +28,7 @@ public class Soar {
         while (!isExit && ui.hasNextCommand()) {
             String command = ui.readCommand();
             try {
-                Command executableCommand = Parser.parse(command, tasks.size());
+                Command executableCommand = Parser.parse(command);
                 executableCommand.execute(tasks, ui, storage);
                 isExit = executableCommand.isExit();
             } catch (SoarException e) {

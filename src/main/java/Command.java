@@ -20,6 +20,32 @@ public abstract class Command {
     public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws SoarException;
 
     /**
+     * Converts a user-facing task number to an index after checking the current list.
+     *
+     * @param taskNumber one-based number entered by the user
+     * @param tasks current task list
+     * @param commandType numbered command requesting the task
+     * @return validated zero-based task index
+     * @throws InvalidTaskNumberException if the selected task does not exist
+     */
+    protected final int requireTaskIndex(int taskNumber, TaskList tasks,
+            CommandType commandType) throws InvalidTaskNumberException {
+        int taskCount = tasks.size();
+        String commandWord = commandType.getCommandWord();
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            if (taskCount == 0) {
+                throw new InvalidTaskNumberException(
+                        "Your task list is an open sky right now. Add a task before using '"
+                                + commandWord + "'!");
+            }
+            throw new InvalidTaskNumberException("Task " + taskNumber
+                    + " is outside your list. Choose a number from 1 to " + taskCount
+                    + " and we'll stay on course!");
+        }
+        return taskNumber - 1;
+    }
+
+    /**
      * Persists a changed task list and reverses the change if saving fails.
      *
      * @param storage persistence service

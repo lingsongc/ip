@@ -12,20 +12,19 @@ public class Parser {
      * Interprets a complete input line and builds the command it represents.
      *
      * @param input complete line entered by the user
-     * @param taskCount number of tasks currently stored
      * @return command ready to execute
      * @throws SoarException if the command or one of its arguments is invalid
      */
-    public static Command parse(String input, int taskCount) throws SoarException {
+    public static Command parse(String input) throws SoarException {
         CommandType commandType = parseCommand(input);
         return switch (commandType) {
         case BYE -> new ExitCommand();
         case LIST -> new ListCommand();
         case DATE -> new DateCommand(parseDate(input));
         case TODO, DEADLINE, EVENT -> new AddCommand(parseTask(input, commandType));
-        case MARK -> new MarkCommand(parseTaskIndex(input, commandType, taskCount));
-        case UNMARK -> new UnmarkCommand(parseTaskIndex(input, commandType, taskCount));
-        case DELETE -> new DeleteCommand(parseTaskIndex(input, commandType, taskCount));
+        case MARK -> new MarkCommand(parseTaskNumber(input, commandType));
+        case UNMARK -> new UnmarkCommand(parseTaskNumber(input, commandType));
+        case DELETE -> new DeleteCommand(parseTaskNumber(input, commandType));
         };
     }
 
@@ -64,16 +63,14 @@ public class Parser {
     }
 
     /**
-     * Parses and validates the task number in a mark, unmark, or delete command.
+     * Parses the task number in a mark, unmark, or delete command.
      *
      * @param input complete line entered by the user
      * @param commandType mark, unmark, or delete
-     * @param taskCount number of tasks currently stored
-     * @return zero-based index of the selected task
-     * @throws InvalidTaskNumberException if the number is missing, not an integer,
-     *         or outside the task list
+     * @return one-based task number entered by the user
+     * @throws InvalidTaskNumberException if the number is missing or not an integer
      */
-    private static int parseTaskIndex(String input, CommandType commandType, int taskCount)
+    private static int parseTaskNumber(String input, CommandType commandType)
             throws InvalidTaskNumberException {
         String commandWord = commandType.getCommandWord();
         String taskNumberText = argumentsAfter(input, commandType);
@@ -91,17 +88,7 @@ public class Parser {
                     + "' is not a whole task number. Choose a number from your list to keep flying high!");
         }
 
-        if (taskNumber < 1 || taskNumber > taskCount) {
-            if (taskCount == 0) {
-                throw new InvalidTaskNumberException(
-                        "Your task list is an open sky right now. Add a task before using '"
-                                + commandWord + "'!");
-            }
-            throw new InvalidTaskNumberException("Task " + taskNumber
-                    + " is outside your list. Choose a number from 1 to " + taskCount
-                    + " and we'll stay on course!");
-        }
-        return taskNumber - 1;
+        return taskNumber;
     }
 
     /**

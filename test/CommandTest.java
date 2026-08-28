@@ -22,12 +22,13 @@ public class CommandTest {
             verifyMarkRollback(storage);
             verifyUnmarkRollback(storage);
             verifyDeleteRollback(storage);
+            verifyTaskNumberValidation(storage);
         } finally {
             Files.deleteIfExists(storageTarget);
         }
 
-        System.out.println("[PASS] Commands rolled back additions, completion changes, "
-                + "and deletions after save failures");
+        System.out.println("[PASS] Commands validated task numbers and rolled back additions, "
+                + "completion changes, and deletions after save failures");
     }
 
     /** Verifies that a failed save removes the task that was just added. */
@@ -41,7 +42,7 @@ public class CommandTest {
     private static void verifyMarkRollback(Storage storage) throws Exception {
         TaskList tasks = new TaskList();
         tasks.add(new ToDo("remain incomplete"));
-        expectSaveFailure(new MarkCommand(0), tasks, storage);
+        expectSaveFailure(new MarkCommand(1), tasks, storage);
         require(!tasks.get(0).isDone(), "A failed mark left the task completed");
     }
 
@@ -50,7 +51,7 @@ public class CommandTest {
         TaskList tasks = new TaskList();
         tasks.add(new ToDo("remain complete"));
         tasks.mark(0);
-        expectSaveFailure(new UnmarkCommand(0), tasks, storage);
+        expectSaveFailure(new UnmarkCommand(1), tasks, storage);
         require(tasks.get(0).isDone(), "A failed unmark left the task incomplete");
     }
 
@@ -61,10 +62,35 @@ public class CommandTest {
         Task secondTask = new ToDo("stay second");
         tasks.add(firstTask);
         tasks.add(secondTask);
-        expectSaveFailure(new DeleteCommand(0), tasks, storage);
+        expectSaveFailure(new DeleteCommand(1), tasks, storage);
         require(tasks.size() == 2, "A failed deletion changed the task count");
         require(tasks.get(0) == firstTask && tasks.get(1) == secondTask,
                 "A failed deletion did not restore the original order");
+    }
+
+    /** Verifies that numbered commands reject tasks that do not currently exist. */
+    private static void verifyTaskNumberValidation(Storage storage) throws Exception {
+        TaskList tasks = new TaskList();
+        expectInvalidTaskNumber(new MarkCommand(1), tasks, storage, "open sky");
+
+        Task task = new ToDo("remain unchanged");
+        tasks.add(task);
+        expectInvalidTaskNumber(new UnmarkCommand(0), tasks, storage, "Task 0");
+        expectInvalidTaskNumber(new DeleteCommand(2), tasks, storage, "Task 2");
+        require(tasks.size() == 1 && tasks.get(0) == task && !task.isDone(),
+                "An invalid task number changed the task list");
+    }
+
+    /** Executes a numbered command and requires it to explain an invalid selection. */
+    private static void expectInvalidTaskNumber(Command command, TaskList tasks,
+            Storage storage, String expectedMessagePart) throws Exception {
+        try {
+            command.execute(tasks, new Ui(), storage);
+            throw new AssertionError("The command should reject a task that does not exist");
+        } catch (InvalidTaskNumberException expected) {
+            require(expected.getMessage().contains(expectedMessagePart),
+                    "The invalid task number did not produce the expected guidance");
+        }
     }
 
     /** Executes a command and requires persistence to fail with the shared message. */
