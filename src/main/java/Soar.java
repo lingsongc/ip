@@ -40,6 +40,10 @@ public class Soar {
                 case DATE -> new DateCommand(Parser.parseDate(command));
                 case TODO, DEADLINE, EVENT ->
                     new AddCommand(Parser.parseTask(command, commandType));
+                case MARK -> new MarkCommand(
+                        Parser.parseTaskIndex(command, commandType, tasks.size()));
+                case UNMARK -> new UnmarkCommand(
+                        Parser.parseTaskIndex(command, commandType, tasks.size()));
                 default -> null;
                 };
                 if (executableCommand != null) {
@@ -48,21 +52,7 @@ public class Soar {
                     continue;
                 }
 
-                if (commandType == CommandType.MARK) {
-                    int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    Task task = tasks.get(taskIndex);
-                    boolean wasDone = task.isDone();
-                    tasks.mark(taskIndex);
-                    saveChange(storage, tasks, () -> tasks.restoreCompletion(taskIndex, wasDone));
-                    ui.showTaskMarked(task, true);
-                } else if (commandType == CommandType.UNMARK) {
-                    int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    Task task = tasks.get(taskIndex);
-                    boolean wasDone = task.isDone();
-                    tasks.unmark(taskIndex);
-                    saveChange(storage, tasks, () -> tasks.restoreCompletion(taskIndex, wasDone));
-                    ui.showTaskMarked(task, false);
-                } else if (commandType == CommandType.DELETE) {
+                if (commandType == CommandType.DELETE) {
                     int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
                     Task removedTask = tasks.delete(taskIndex);
                     saveChange(storage, tasks,
