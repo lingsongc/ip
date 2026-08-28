@@ -21,12 +21,13 @@ public class CommandTest {
             verifyAddRollback(storage);
             verifyMarkRollback(storage);
             verifyUnmarkRollback(storage);
+            verifyDeleteRollback(storage);
         } finally {
             Files.deleteIfExists(storageTarget);
         }
 
-        System.out.println("[PASS] Commands rolled back additions and completion changes "
-                + "after save failures");
+        System.out.println("[PASS] Commands rolled back additions, completion changes, "
+                + "and deletions after save failures");
     }
 
     /** Verifies that a failed save removes the task that was just added. */
@@ -51,6 +52,19 @@ public class CommandTest {
         tasks.mark(0);
         expectSaveFailure(new UnmarkCommand(0), tasks, storage);
         require(tasks.get(0).isDone(), "A failed unmark left the task incomplete");
+    }
+
+    /** Verifies that a failed deletion restores the task at its original index. */
+    private static void verifyDeleteRollback(Storage storage) throws Exception {
+        TaskList tasks = new TaskList();
+        Task firstTask = new ToDo("stay first");
+        Task secondTask = new ToDo("stay second");
+        tasks.add(firstTask);
+        tasks.add(secondTask);
+        expectSaveFailure(new DeleteCommand(0), tasks, storage);
+        require(tasks.size() == 2, "A failed deletion changed the task count");
+        require(tasks.get(0) == firstTask && tasks.get(1) == secondTask,
+                "A failed deletion did not restore the original order");
     }
 
     /** Executes a command and requires persistence to fail with the shared message. */
