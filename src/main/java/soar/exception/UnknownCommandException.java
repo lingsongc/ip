@@ -9,6 +9,6 @@ public class UnknownCommandException extends SoarException {
      */
     public UnknownCommandException() {
         super("That command is on an unfamiliar flight path. "
-                + "Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!");
+                + "Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!");
     }
 }

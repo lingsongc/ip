@@ -98,13 +98,22 @@ public class Ui {
         showFramed(lines);
     }
 
+    /** Shows tasks whose descriptions match a find command. */
+    public void showMatchingTasks(List<Task> tasks) {
+        ArrayList<String> lines = new ArrayList<>();
+        lines.add("Here are the matching tasks in your list:");
+        for (int i = 0; i < tasks.size(); i++) {
+            lines.add((i + 1) + "." + tasks.get(i));
+        }
+        showFramed(lines);
+    }
+
     /**
      * Shows the confirmation for a newly added task.
      *
      * @param task Added task.
      * @param taskCount Number of tasks after the addition.
-     */
-    public void showTaskAdded(Task task, int taskCount) {
+     */    public void showTaskAdded(Task task, int taskCount) {
         showFramed(List.of(
                 "Got it. I've added this task:",
                 "  " + task,

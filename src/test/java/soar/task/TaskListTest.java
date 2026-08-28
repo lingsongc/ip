@@ -82,4 +82,19 @@ public class TaskListTest {
         assertThrows(UnsupportedOperationException.class,
                 () -> tasks.findIndicesOn(LocalDate.of(2019, 10, 15)).add(3));
     }
+
+    /** Verifies description searches preserve order and ignore task metadata. */
+    @Test
+    public void findByDescription_mixedTasks_returnsOnlyDescriptionMatches() {
+        ToDo first = new ToDo("read book");
+        Deadline second = new Deadline("return book", LocalDate.of(2019, 6, 6));
+        Deadline metadataOnly = new Deadline("submit report", LocalDate.of(2019, 6, 6));
+        TaskList tasks = new TaskList(List.of(first, second, metadataOnly));
+
+        assertEquals(List.of(first, second), tasks.findByDescription("book"));
+        assertTrue(tasks.findByDescription("Book").isEmpty());
+        assertTrue(tasks.findByDescription("June").isEmpty());
+        assertThrows(UnsupportedOperationException.class,
+                () -> tasks.findByDescription("book").add(new ToDo("another book")));
+    }
 }

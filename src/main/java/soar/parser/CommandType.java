@@ -6,6 +6,7 @@ package soar.parser;
 public enum CommandType {
     BYE("bye", false),
     LIST("list", false),
+    FIND("find", true),
     DATE("date", true),
     MARK("mark", TaskAction.COMPLETE_FLIGHT),
     UNMARK("unmark", TaskAction.RETURN_TO_FLIGHT_PATH),

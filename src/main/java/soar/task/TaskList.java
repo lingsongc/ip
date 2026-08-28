@@ -146,4 +146,17 @@ public class TaskList {
         }
         return List.copyOf(matches);
     }
+
+    /**
+     * Finds tasks whose descriptions contain the supplied search text.
+     *
+     * @param keyword keyword or phrase to find in task descriptions
+     * @return matching tasks in their original list order
+     */
+    public List<Task> findByDescription(String keyword) {
+        Objects.requireNonNull(keyword, "Search keyword must not be null");
+        return tasks.stream()
+                .filter(task -> task.descriptionContains(keyword))
+                .toList();
+    }
 }
