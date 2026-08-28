@@ -9,13 +9,34 @@ public class Parser {
     }
 
     /**
+     * Interprets a complete input line and builds the command it represents.
+     *
+     * @param input complete line entered by the user
+     * @param taskCount number of tasks currently stored
+     * @return command ready to execute
+     * @throws SoarException if the command or one of its arguments is invalid
+     */
+    public static Command parse(String input, int taskCount) throws SoarException {
+        CommandType commandType = parseCommand(input);
+        return switch (commandType) {
+        case BYE -> new ExitCommand();
+        case LIST -> new ListCommand();
+        case DATE -> new DateCommand(parseDate(input));
+        case TODO, DEADLINE, EVENT -> new AddCommand(parseTask(input, commandType));
+        case MARK -> new MarkCommand(parseTaskIndex(input, commandType, taskCount));
+        case UNMARK -> new UnmarkCommand(parseTaskIndex(input, commandType, taskCount));
+        case DELETE -> new DeleteCommand(parseTaskIndex(input, commandType, taskCount));
+        };
+    }
+
+    /**
      * Identifies the command represented by a complete input line.
      *
      * @param input complete line entered by the user
      * @return matching command type
      * @throws UnknownCommandException if the input does not start with a supported command
      */
-    public static CommandType parseCommand(String input) throws UnknownCommandException {
+    private static CommandType parseCommand(String input) throws UnknownCommandException {
         for (CommandType commandType : CommandType.values()) {
             if (commandType.matches(input)) {
                 return commandType;
@@ -32,7 +53,7 @@ public class Parser {
      * @return validated task represented by the command
      * @throws SoarException if a required task detail is missing or invalid
      */
-    public static Task parseTask(String input, CommandType commandType) throws SoarException {
+    private static Task parseTask(String input, CommandType commandType) throws SoarException {
         return switch (commandType) {
         case TODO -> parseToDo(input);
         case DEADLINE -> parseDeadline(input);
@@ -52,7 +73,7 @@ public class Parser {
      * @throws InvalidTaskNumberException if the number is missing, not an integer,
      *         or outside the task list
      */
-    public static int parseTaskIndex(String input, CommandType commandType, int taskCount)
+    private static int parseTaskIndex(String input, CommandType commandType, int taskCount)
             throws InvalidTaskNumberException {
         String commandWord = commandType.getCommandWord();
         String taskNumberText = argumentsAfter(input, commandType);
@@ -90,7 +111,7 @@ public class Parser {
      * @return requested calendar date
      * @throws InvalidTaskFormatException if the date is missing or unrecognized
      */
-    public static LocalDate parseDate(String input) throws InvalidTaskFormatException {
+    private static LocalDate parseDate(String input) throws InvalidTaskFormatException {
         String value = argumentsAfter(input, CommandType.DATE);
         if (value.isEmpty()) {
             throw new InvalidTaskFormatException(

@@ -28,21 +28,7 @@ public class Soar {
         while (!isExit && ui.hasNextCommand()) {
             String command = ui.readCommand();
             try {
-                CommandType commandType = Parser.parseCommand(command);
-
-                Command executableCommand = switch (commandType) {
-                case BYE -> new ExitCommand();
-                case LIST -> new ListCommand();
-                case DATE -> new DateCommand(Parser.parseDate(command));
-                case TODO, DEADLINE, EVENT ->
-                    new AddCommand(Parser.parseTask(command, commandType));
-                case MARK -> new MarkCommand(
-                        Parser.parseTaskIndex(command, commandType, tasks.size()));
-                case UNMARK -> new UnmarkCommand(
-                        Parser.parseTaskIndex(command, commandType, tasks.size()));
-                case DELETE -> new DeleteCommand(
-                        Parser.parseTaskIndex(command, commandType, tasks.size()));
-                };
+                Command executableCommand = Parser.parse(command, tasks.size());
                 executableCommand.execute(tasks, ui, storage);
                 isExit = executableCommand.isExit();
             } catch (SoarException e) {
