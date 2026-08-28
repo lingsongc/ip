@@ -24,6 +24,13 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Project-specific requirements
 
+## Java coding standard
+
+For every Java code creation, edit, refactor, or review in this repository, invoke the
+`$seedu-java-coding-standard` skill and follow its rules. Apply the standard to both application
+and test code. Treat the SE-EDU basic + intermediate Java coding standard as authoritative, and
+use the Google Java Style Guide only for topics that standard does not cover.
+
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
