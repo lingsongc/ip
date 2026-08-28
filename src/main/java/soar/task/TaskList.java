@@ -12,7 +12,9 @@ public class TaskList {
     /** Tasks in the same order in which they are shown to the user. */
     private final ArrayList<Task> tasks;
 
-    /** Creates an empty task list. */
+    /**
+     * Creates an empty task list.
+     */
     public TaskList() {
         this(List.of());
     }
@@ -20,7 +22,7 @@ public class TaskList {
     /**
      * Creates a task list containing a copy of previously loaded tasks.
      *
-     * @param initialTasks tasks to store in their current order
+     * @param initialTasks Tasks to store in their current order.
      */
     public TaskList(List<Task> initialTasks) {
         Objects.requireNonNull(initialTasks, "Initial tasks must not be null");
@@ -39,7 +41,7 @@ public class TaskList {
     /**
      * Returns the task at a zero-based index.
      *
-     * @param index zero-based task index
+     * @param index Zero-based task index.
      * @return selected task
      */
     public Task get(int index) {
@@ -58,7 +60,11 @@ public class TaskList {
         return List.copyOf(tasks);
     }
 
-    /** Adds a task to the end of the list. */
+    /**
+     * Adds a task to the end of the list.
+     *
+     * @param task Task to add.
+     */
     public void add(Task task) {
         tasks.add(Objects.requireNonNull(task, "Task must not be null"));
     }
@@ -66,7 +72,7 @@ public class TaskList {
     /**
      * Deletes and returns the task at a zero-based index.
      *
-     * @param index zero-based task index
+     * @param index Zero-based task index.
      * @return removed task
      */
     public Task delete(int index) {
@@ -76,21 +82,31 @@ public class TaskList {
     /**
      * Restores a task at its previous position after a failed save.
      *
-     * @param index zero-based position at which the task belonged
-     * @param task task to restore
+     * @param index Zero-based position at which the task belonged.
+     * @param task Task to restore.
      */
     public void restoreDeletedTask(int index, Task task) {
         tasks.add(index, Objects.requireNonNull(task, "Task must not be null"));
     }
 
-    /** Marks and returns the task at a zero-based index. */
+    /**
+     * Marks and returns the task at a zero-based index.
+     *
+     * @param index Zero-based task index.
+     * @return Marked task.
+     */
     public Task mark(int index) {
         Task task = tasks.get(index);
         task.markAsDone();
         return task;
     }
 
-    /** Unmarks and returns the task at a zero-based index. */
+    /**
+     * Unmarks and returns the task at a zero-based index.
+     *
+     * @param index Zero-based task index.
+     * @return Unmarked task.
+     */
     public Task unmark(int index) {
         Task task = tasks.get(index);
         task.markAsNotDone();
@@ -100,8 +116,8 @@ public class TaskList {
     /**
      * Restores a task's completion state after a failed save.
      *
-     * @param index zero-based task index
-     * @param wasDone completion state to restore
+     * @param index Zero-based task index.
+     * @param wasDone Completion state to restore.
      */
     public void restoreCompletion(int index, boolean wasDone) {
         if (wasDone) {
@@ -114,7 +130,7 @@ public class TaskList {
     /**
      * Finds the original zero-based indices of dated tasks occurring on a date.
      *
-     * @param date calendar date to match
+     * @param date Calendar date to match.
      * @return matching indices in task-list order
      */
     public List<Integer> findIndicesOn(LocalDate date) {

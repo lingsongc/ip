@@ -16,10 +16,16 @@ import soar.ui.Ui;
  */
 public class Soar {
     /**
+     * Creates the Soar application entry point.
+     */
+    public Soar() {
+    }
+
+    /**
      * Greets the user, stores tasks, lists or updates their status on request, and
      * exits when the user enters {@code bye}.
      *
-     * @param args optional first argument overrides the default task data file
+     * @param args Optional first argument overrides the default task data file.
      */
     public static void main(String[] args) {
         Ui ui = new Ui();

@@ -19,9 +19,9 @@ public class Event extends Task {
     /**
      * Creates an incomplete event with the given description and time range.
      *
-     * @param description description of the event
-     * @param from date or time at which the event starts
-     * @param to date or time at which the event ends
+     * @param description Description of the event.
+     * @param from Date or time at which the event starts.
+     * @param to Date or time at which the event ends.
      */
     public Event(String description, String from, String to) {
         super(description);
@@ -36,7 +36,7 @@ public class Event extends Task {
      * contains a supported calendar date, that date alone is matched. This keeps
      * older free-form event times valid while making dated events searchable.</p>
      *
-     * @param date calendar date to check
+     * @param date Calendar date to check.
      * @return {@code true} if the event occurs on that date
      */
     public boolean occursOn(LocalDate date) {

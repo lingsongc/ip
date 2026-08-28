@@ -7,7 +7,7 @@ public class StorageException extends SoarException {
     /**
      * Creates a storage exception with a user-friendly explanation.
      *
-     * @param message explanation shown to the user
+     * @param message Explanation shown to the user.
      */
     public StorageException(String message) {
         super(message);
