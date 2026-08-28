@@ -24,7 +24,7 @@ public class DateCommand extends Command {
     /**
      * Creates a date query for a validated calendar date.
      *
-     * @param date date whose deadlines and events should be shown
+     * @param date Date whose deadlines and events should be shown.
      */
     public DateCommand(LocalDate date) {
         this.date = Objects.requireNonNull(date, "Query date must not be null");

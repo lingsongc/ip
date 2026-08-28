@@ -28,8 +28,8 @@ public class Deadline extends Task {
     /**
      * Creates an incomplete deadline due on the given date.
      *
-     * @param description description of what needs to be done
-     * @param by date by which the task should be completed
+     * @param description Description of what needs to be done.
+     * @param by Date by which the task should be completed.
      */
     public Deadline(String description, LocalDate by) {
         super(description);
@@ -40,8 +40,8 @@ public class Deadline extends Task {
     /**
      * Creates an incomplete deadline due at the given date and time.
      *
-     * @param description description of what needs to be done
-     * @param by date and time by which the task should be completed
+     * @param description Description of what needs to be done.
+     * @param by Date and time by which the task should be completed.
      */
     public Deadline(String description, LocalDateTime by) {
         super(description);

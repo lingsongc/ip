@@ -9,6 +9,12 @@ import soar.ui.Ui;
  */
 public class ExitCommand extends Command {
     /**
+     * Creates a command that ends the current Soar session.
+     */
+    public ExitCommand() {
+    }
+
+    /**
      * Displays the farewell message for the current session.
      *
      * @param tasks unused task-list dependency supplied by the command interface
@@ -20,11 +26,6 @@ public class ExitCommand extends Command {
         ui.showGoodbye();
     }
 
-    /**
-     * Identifies this command as the command that ends the input loop.
-     *
-     * @return {@code true} because this is an exit command
-     */
     @Override
     public boolean isExit() {
         return true;

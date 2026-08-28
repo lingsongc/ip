@@ -16,12 +16,16 @@ public class Ui {
     /** Console input used to read commands. */
     private final Scanner scanner;
 
-    /** Creates a user interface connected to standard input. */
+    /**
+     * Creates a user interface connected to standard input.
+     */
     public Ui() {
         scanner = new Scanner(System.in);
     }
 
-    /** Shows the application banner and greeting. */
+    /**
+     * Shows the application banner and greeting.
+     */
     public void showWelcome() {
         String banner = " ____                    \n"
                 + "/ ___|  ___   __ _ _ __  \n"
@@ -53,12 +57,18 @@ public class Ui {
         return scanner.nextLine();
     }
 
-    /** Shows the farewell response. */
+    /**
+     * Shows the farewell response.
+     */
     public void showGoodbye() {
         showFramed("Bye! Always soar towards your goals!");
     }
 
-    /** Shows an error raised while handling a command. */
+    /**
+     * Shows an error raised while handling a command.
+     *
+     * @param message Error message to show.
+     */
     public void showError(String message) {
         showFramed(message);
     }
@@ -66,7 +76,7 @@ public class Ui {
     /**
      * Explains why startup cannot continue after loading task data.
      *
-     * @param details cause reported by storage or path validation
+     * @param details Cause reported by storage or path validation.
      */
     public void showLoadingError(String details) {
         System.out.println("I couldn't load the task data safely: " + details);
@@ -74,7 +84,11 @@ public class Ui {
         System.out.println(separator());
     }
 
-    /** Shows every task with its one-based list number. */
+    /**
+     * Shows every task with its one-based list number.
+     *
+     * @param tasks Tasks to show in list order.
+     */
     public void showTaskList(List<Task> tasks) {
         ArrayList<String> lines = new ArrayList<>();
         lines.add("Here are the tasks in your list:");
@@ -84,7 +98,12 @@ public class Ui {
         showFramed(lines);
     }
 
-    /** Shows the confirmation for a newly added task. */
+    /**
+     * Shows the confirmation for a newly added task.
+     *
+     * @param task Added task.
+     * @param taskCount Number of tasks after the addition.
+     */
     public void showTaskAdded(Task task, int taskCount) {
         showFramed(List.of(
                 "Got it. I've added this task:",
@@ -92,7 +111,12 @@ public class Ui {
                 "Now you have " + taskCount + " tasks in the list."));
     }
 
-    /** Shows the confirmation for a changed task completion state. */
+    /**
+     * Shows the confirmation for a changed task completion state.
+     *
+     * @param task Task whose state changed.
+     * @param isDone Whether the task is now complete.
+     */
     public void showTaskMarked(Task task, boolean isDone) {
         String message = isDone
                 ? "Nice! I've marked this task as done:"
@@ -100,7 +124,12 @@ public class Ui {
         showFramed(List.of(message, "  " + task));
     }
 
-    /** Shows the confirmation for a removed task. */
+    /**
+     * Shows the confirmation for a removed task.
+     *
+     * @param task Removed task.
+     * @param taskCount Number of tasks after the removal.
+     */
     public void showTaskDeleted(Task task, int taskCount) {
         showFramed(List.of(
                 "Noted. I've removed this task:",
@@ -108,7 +137,12 @@ public class Ui {
                 "Now you have " + taskCount + " tasks in the list."));
     }
 
-    /** Shows tasks matching a requested date, or explains that there are none. */
+    /**
+     * Shows tasks matching a requested date, or explains that there are none.
+     *
+     * @param displayedDate Requested date formatted for display.
+     * @param matches Matching task descriptions with their list numbers.
+     */
     public void showTasksOnDate(String displayedDate, List<String> matches) {
         if (matches.isEmpty()) {
             showFramed("There are no deadlines or events on " + displayedDate + ".");

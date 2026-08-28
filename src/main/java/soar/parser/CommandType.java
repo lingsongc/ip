@@ -26,8 +26,8 @@ public enum CommandType {
     /**
      * Creates a command that does not operate on a numbered task.
      *
-     * @param commandWord word entered by the user for this command
-     * @param allowsArguments whether text may follow the command word
+     * @param commandWord Word entered by the user for this command.
+     * @param allowsArguments Whether text may follow the command word.
      */
     CommandType(String commandWord, boolean allowsArguments) {
         this(commandWord, allowsArguments, null);
@@ -36,8 +36,8 @@ public enum CommandType {
     /**
      * Creates a command that operates on a numbered task.
      *
-     * @param commandWord word entered by the user for this command
-     * @param missingTaskNumberAction action described when its task number is missing
+     * @param commandWord Word entered by the user for this command.
+     * @param missingTaskNumberAction Action described when its task number is missing.
      */
     CommandType(String commandWord, TaskAction missingTaskNumberAction) {
         this(commandWord, true, missingTaskNumberAction);
@@ -46,9 +46,9 @@ public enum CommandType {
     /**
      * Creates a command with its complete parsing and error-message data.
      *
-     * @param commandWord word entered by the user for this command
-     * @param allowsArguments whether text may follow the command word
-     * @param missingTaskNumberAction action described when its task number is missing
+     * @param commandWord Word entered by the user for this command.
+     * @param allowsArguments Whether text may follow the command word.
+     * @param missingTaskNumberAction Action described when its task number is missing.
      */
     CommandType(String commandWord, boolean allowsArguments, TaskAction missingTaskNumberAction) {
         this.commandWord = commandWord;
@@ -59,7 +59,7 @@ public enum CommandType {
     /**
      * Checks whether an input line uses this command's accepted shape.
      *
-     * @param input complete line entered by the user
+     * @param input Complete line entered by the user.
      * @return {@code true} if this command accepts the input
      */
     public boolean matches(String input) {

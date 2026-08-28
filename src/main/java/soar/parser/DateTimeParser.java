@@ -37,7 +37,7 @@ public final class DateTimeParser {
     /**
      * Parses a value that contains both a date and a time.
      *
-     * @param value user-supplied date-time text
+     * @param value User-supplied date-time text.
      * @return parsed value, or an empty result when no supported format matches
      */
     public static Optional<LocalDateTime> parseDateTime(String value) {
@@ -54,7 +54,7 @@ public final class DateTimeParser {
     /**
      * Parses a value that contains only a date.
      *
-     * @param value user-supplied date text
+     * @param value User-supplied date text.
      * @return parsed value, or an empty result when no supported format matches
      */
     public static Optional<LocalDate> parseDate(String value) {
@@ -71,7 +71,7 @@ public final class DateTimeParser {
     /**
      * Extracts the calendar date from any supported date or date-time value.
      *
-     * @param value user-supplied scheduling text
+     * @param value User-supplied scheduling text.
      * @return calendar date, or an empty result when the text is not recognized
      */
     public static Optional<LocalDate> parseCalendarDate(String value) {

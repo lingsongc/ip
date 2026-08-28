@@ -27,7 +27,9 @@ public class Storage {
     /** Data file used by this storage instance. */
     private final Path dataFile;
 
-    /** Creates storage that uses the application's default data file. */
+    /**
+     * Creates storage that uses the application's default data file.
+     */
     public Storage() {
         this(DEFAULT_DATA_FILE);
     }
@@ -35,7 +37,7 @@ public class Storage {
     /**
      * Creates storage that uses a specific data file.
      *
-     * @param dataFile relative file from which tasks are loaded and to which they are saved
+     * @param dataFile Relative file from which tasks are loaded and to which they are saved.
      */
     public Storage(Path dataFile) {
         if (dataFile == null || dataFile.getFileName() == null) {
@@ -74,7 +76,7 @@ public class Storage {
     /**
      * Replaces the data file with a snapshot of the current task list.
      *
-     * @param tasks tasks to save in their current order
+     * @param tasks Tasks to save in their current order.
      * @throws IOException if the data directory or file cannot be written
      */
     public void save(List<Task> tasks) throws IOException {
@@ -103,7 +105,7 @@ public class Storage {
     /**
      * Escapes characters that have structural meaning in the line-based format.
      *
-     * @param value task text to encode
+     * @param value Task text to encode.
      * @return text safe to store as one field on one line
      */
     public static String escapeField(String value) {
@@ -116,7 +118,7 @@ public class Storage {
     /**
      * Converts one valid storage line back into its concrete task type.
      *
-     * @param line serialized task from the data file
+     * @param line Serialized task from the data file.
      * @return reconstructed task
      * @throws StorageException if the line has an invalid type, status, or fields
      */
@@ -175,7 +177,7 @@ public class Storage {
     /**
      * Splits a record at unescaped {@code |} delimiters and restores escaped text.
      *
-     * @param line serialized task record
+     * @param line Serialized task record.
      * @return decoded fields
      * @throws StorageException if an escape sequence is incomplete or unsupported
      */

@@ -9,6 +9,12 @@ import soar.ui.Ui;
  */
 public class ListCommand extends Command {
     /**
+     * Creates a command that shows all stored tasks.
+     */
+    public ListCommand() {
+    }
+
+    /**
      * Displays a snapshot of all tasks in their current order.
      *
      * @param tasks task list to display

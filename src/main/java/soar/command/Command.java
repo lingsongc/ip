@@ -20,11 +20,17 @@ public abstract class Command {
                     + "Please check the data file and try again.";
 
     /**
+     * Creates a command that can operate on the application's components.
+     */
+    protected Command() {
+    }
+
+    /**
      * Performs this command's behavior.
      *
-     * @param tasks task collection on which the command can operate
-     * @param ui user interface used to present the result
-     * @param storage persistence service for commands that change tasks
+     * @param tasks Task collection on which the command can operate.
+     * @param ui User interface used to present the result.
+     * @param storage Persistence service for commands that change tasks.
      * @throws SoarException if the command cannot be completed safely
      */
     public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws SoarException;
@@ -32,9 +38,9 @@ public abstract class Command {
     /**
      * Converts a user-facing task number to an index after checking the current list.
      *
-     * @param taskNumber one-based number entered by the user
-     * @param tasks current task list
-     * @param commandType numbered command requesting the task
+     * @param taskNumber One-based number entered by the user.
+     * @param tasks Current task list.
+     * @param commandType Numbered command requesting the task.
      * @return validated zero-based task index
      * @throws InvalidTaskNumberException if the selected task does not exist
      */
@@ -58,9 +64,9 @@ public abstract class Command {
     /**
      * Persists a changed task list and reverses the change if saving fails.
      *
-     * @param storage persistence service
-     * @param tasks changed task list
-     * @param rollback action that restores the previous in-memory state
+     * @param storage Persistence service.
+     * @param tasks Changed task list.
+     * @param rollback Action that restores the previous in-memory state.
      * @throws StorageException if the changed list cannot be saved
      */
     protected final void saveChange(Storage storage, TaskList tasks, Runnable rollback)

@@ -14,7 +14,7 @@ public enum TaskAction {
     /**
      * Creates a task action with its user-facing description.
      *
-     * @param description phrase describing the action
+     * @param description Phrase describing the action.
      */
     TaskAction(String description) {
         this.description = description;

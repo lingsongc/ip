@@ -13,7 +13,7 @@ public abstract class Task {
     /**
      * Creates an incomplete task with the given description.
      *
-     * @param description description of what needs to be done
+     * @param description Description of what needs to be done.
      */
     public Task(String description) {
         this.description = description;
@@ -61,12 +61,16 @@ public abstract class Task {
         return isDone ? "X" : " ";
     }
 
-    /** Marks this task as completed. */
+    /**
+     * Marks this task as completed.
+     */
     public void markAsDone() {
         isDone = true;
     }
 
-    /** Marks this task as not completed. */
+    /**
+     * Marks this task as not completed.
+     */
     public void markAsNotDone() {
         isDone = false;
     }

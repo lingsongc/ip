@@ -7,7 +7,7 @@ public class InvalidTaskNumberException extends SoarException {
     /**
      * Creates an exception with guidance for selecting a valid task.
      *
-     * @param message explanation of the task-number problem
+     * @param message Explanation of the task-number problem.
      */
     public InvalidTaskNumberException(String message) {
         super(message);

@@ -7,7 +7,7 @@ public class EmptyDescriptionException extends SoarException {
     /**
      * Creates an exception that identifies the task type with the empty description.
      *
-     * @param taskType name of the task type entered by the user
+     * @param taskType Name of the task type entered by the user.
      */
     public EmptyDescriptionException(String taskType) {
         super("The " + taskType

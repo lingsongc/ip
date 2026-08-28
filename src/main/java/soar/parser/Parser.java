@@ -31,7 +31,7 @@ public class Parser {
     /**
      * Interprets a complete input line and builds the command it represents.
      *
-     * @param input complete line entered by the user
+     * @param input Complete line entered by the user.
      * @return command ready to execute
      * @throws SoarException if the command or one of its arguments is invalid
      */
@@ -51,7 +51,7 @@ public class Parser {
     /**
      * Identifies the command represented by a complete input line.
      *
-     * @param input complete line entered by the user
+     * @param input Complete line entered by the user.
      * @return matching command type
      * @throws UnknownCommandException if the input does not start with a supported command
      */
@@ -67,8 +67,8 @@ public class Parser {
     /**
      * Builds the task described by a todo, deadline, or event command.
      *
-     * @param input complete task-creation command
-     * @param commandType type of task command being parsed
+     * @param input Complete task-creation command.
+     * @param commandType Type of task command being parsed.
      * @return validated task represented by the command
      * @throws SoarException if a required task detail is missing or invalid
      */
@@ -85,8 +85,8 @@ public class Parser {
     /**
      * Parses the task number in a mark, unmark, or delete command.
      *
-     * @param input complete line entered by the user
-     * @param commandType mark, unmark, or delete
+     * @param input Complete line entered by the user.
+     * @param commandType Mark, unmark, or delete command type.
      * @return one-based task number entered by the user
      * @throws InvalidTaskNumberException if the number is missing or not an integer
      */
@@ -114,7 +114,7 @@ public class Parser {
     /**
      * Parses the calendar date supplied to a date query.
      *
-     * @param input complete date command
+     * @param input Complete date command.
      * @return requested calendar date
      * @throws InvalidTaskFormatException if the date is missing or unrecognized
      */
