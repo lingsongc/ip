@@ -55,21 +55,14 @@ public enum CommandType {
     }
 
     /**
-     * Finds the command whose word appears at the start of an input line.
+     * Checks whether an input line uses this command's accepted shape.
      *
-     * @param input complete input line entered by the user
-     * @return matching command type
-     * @throws UnknownCommandException if the first word is not a supported command
+     * @param input complete line entered by the user
+     * @return {@code true} if this command accepts the input
      */
-    public static CommandType fromInput(String input) throws UnknownCommandException {
-        for (CommandType commandType : values()) {
-            if (input.equals(commandType.commandWord)
-                    || (commandType.allowsArguments
-                            && input.startsWith(commandType.commandWord + " "))) {
-                return commandType;
-            }
-        }
-        throw new UnknownCommandException();
+    public boolean matches(String input) {
+        return input.equals(commandWord)
+                || (allowsArguments && input.startsWith(commandWord + " "));
     }
 
     /**
