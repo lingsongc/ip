@@ -1,4 +1,12 @@
+package soar.command;
+
 import java.util.Objects;
+
+import soar.exception.StorageException;
+import soar.storage.Storage;
+import soar.task.Task;
+import soar.task.TaskList;
+import soar.ui.Ui;
 
 /**
  * Adds one parsed task and persists the updated task list.

@@ -9,7 +9,7 @@ $exitCode = 1
 New-Item -ItemType Directory -Path $testDirectory | Out-Null
 Push-Location $testDirectory
 try {
-    & java -cp $classesPath Soar "tasks.txt"
+    & java -cp $classesPath soar.Soar "tasks.txt"
     $exitCode = $LASTEXITCODE
 } finally {
     Pop-Location

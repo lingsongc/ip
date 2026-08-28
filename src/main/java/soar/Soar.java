@@ -1,5 +1,15 @@
+package soar;
+
 import java.io.IOException;
 import java.nio.file.Path;
+
+import soar.command.Command;
+import soar.exception.SoarException;
+import soar.exception.StorageException;
+import soar.parser.Parser;
+import soar.storage.Storage;
+import soar.task.TaskList;
+import soar.ui.Ui;
 
 /**
  * Starts the Soar chatbot application.

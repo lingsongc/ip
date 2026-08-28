@@ -1,3 +1,5 @@
+package soar.exception;
+
 /**
  * Signals that a deadline or event command is missing required scheduling details.
  */

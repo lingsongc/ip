@@ -1,6 +1,10 @@
+package soar.ui;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import soar.task.Task;
 
 /**
  * Handles console input and presents Soar's messages to the user.

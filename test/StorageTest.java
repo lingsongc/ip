@@ -5,6 +5,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import soar.exception.StorageException;
+import soar.storage.Storage;
+import soar.task.Deadline;
+import soar.task.Event;
+import soar.task.Task;
+import soar.task.ToDo;
+
 /**
  * Checks that valid persisted tasks can be reconstructed from disk.
  */

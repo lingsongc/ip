@@ -1,4 +1,14 @@
+package soar.command;
+
 import java.io.IOException;
+
+import soar.exception.InvalidTaskNumberException;
+import soar.exception.SoarException;
+import soar.exception.StorageException;
+import soar.parser.CommandType;
+import soar.storage.Storage;
+import soar.task.TaskList;
+import soar.ui.Ui;
 
 /**
  * Represents one user command that can act on the application's components.

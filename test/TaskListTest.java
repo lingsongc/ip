@@ -1,6 +1,12 @@
 import java.time.LocalDate;
 import java.util.List;
 
+import soar.task.Deadline;
+import soar.task.Event;
+import soar.task.Task;
+import soar.task.TaskList;
+import soar.task.ToDo;
+
 /**
  * Checks the collection operations owned by {@link TaskList}.
  */

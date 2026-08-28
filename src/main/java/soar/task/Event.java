@@ -1,5 +1,10 @@
+package soar.task;
+
 import java.time.LocalDate;
 import java.util.Optional;
+
+import soar.parser.DateTimeParser;
+import soar.storage.Storage;
 
 /**
  * Represents a task that takes place between a start and end date or time.

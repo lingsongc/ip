@@ -1,3 +1,5 @@
+package soar.task;
+
 /**
  * Represents the shared state and behavior of a task.
  */

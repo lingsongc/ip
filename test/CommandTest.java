@@ -1,6 +1,19 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import soar.command.AddCommand;
+import soar.command.Command;
+import soar.command.DeleteCommand;
+import soar.command.MarkCommand;
+import soar.command.UnmarkCommand;
+import soar.exception.InvalidTaskNumberException;
+import soar.exception.StorageException;
+import soar.storage.Storage;
+import soar.task.Task;
+import soar.task.TaskList;
+import soar.task.ToDo;
+import soar.ui.Ui;
+
 /**
  * Checks command behavior that is not practical to trigger in normal UI cases.
  */
