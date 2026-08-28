@@ -49,17 +49,32 @@ public class Event extends Task {
                 || endDate.map(date::equals).orElse(false);
     }
 
+    /**
+     * Returns the icon used to identify an event task.
+     *
+     * @return event type icon
+     */
     @Override
     public String getTypeIcon() {
         return "[E]";
     }
 
+    /**
+     * Serializes this event with escaped description and range fields.
+     *
+     * @return escaped event record
+     */
     @Override
     public String toDataString() {
         return "E | " + getDataStatus() + " | " + Storage.escapeField(description)
                 + " | " + Storage.escapeField(from) + " | " + Storage.escapeField(to);
     }
 
+    /**
+     * Formats this event for display with its start and end values.
+     *
+     * @return task summary followed by the event range
+     */
     @Override
     public String toString() {
         return super.toString() + " (from: " + from + " to: " + to + ")";

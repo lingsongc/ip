@@ -30,6 +30,13 @@ public class DateCommand extends Command {
         this.date = Objects.requireNonNull(date, "Query date must not be null");
     }
 
+    /**
+     * Finds and displays deadlines and events occurring on the requested date.
+     *
+     * @param tasks task list to search
+     * @param ui interface used to display matching tasks
+     * @param storage unused storage dependency supplied by the command interface
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         String displayedDate = date.format(DISPLAY_DATE_FORMAT);
