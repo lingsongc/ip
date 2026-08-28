@@ -23,6 +23,14 @@ public class MarkCommand extends Command {
         this.taskNumber = taskNumber;
     }
 
+    /**
+     * Marks the selected task as done, persists the change, and reports it.
+     *
+     * @param tasks task list to update
+     * @param ui interface used to show the confirmation
+     * @param storage storage used to persist the updated list
+     * @throws SoarException if the task number is invalid or the change cannot be saved
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SoarException {
         int taskIndex = requireTaskIndex(taskNumber, tasks, CommandType.MARK);

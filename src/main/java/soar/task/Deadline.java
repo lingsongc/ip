@@ -70,11 +70,21 @@ public class Deadline extends Task {
         return hasTime;
     }
 
+    /**
+     * Returns the icon used to identify a deadline task.
+     *
+     * @return deadline type icon
+     */
     @Override
     public String getTypeIcon() {
         return "[D]";
     }
 
+    /**
+     * Serializes this deadline while preserving whether a time was supplied.
+     *
+     * @return escaped deadline record
+     */
     @Override
     public String toDataString() {
         String storedBy = hasTime
@@ -84,6 +94,11 @@ public class Deadline extends Task {
                 + " | " + storedBy;
     }
 
+    /**
+     * Formats this deadline for display using its original date precision.
+     *
+     * @return task summary followed by the formatted deadline
+     */
     @Override
     public String toString() {
         String displayedBy = by.format(DISPLAY_DATE_FORMAT);

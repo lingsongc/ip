@@ -15,11 +15,21 @@ public class ToDo extends Task {
         super(description);
     }
 
+    /**
+     * Returns the icon used to identify a todo task.
+     *
+     * @return todo type icon
+     */
     @Override
     public String getTypeIcon() {
         return "[T]";
     }
 
+    /**
+     * Serializes this todo for storage.
+     *
+     * @return escaped todo record
+     */
     @Override
     public String toDataString() {
         return "T | " + getDataStatus() + " | " + Storage.escapeField(description);

@@ -24,6 +24,14 @@ public class AddCommand extends Command {
         this.task = Objects.requireNonNull(task, "Task to add must not be null");
     }
 
+    /**
+     * Adds the task, persists the updated list, and reports the addition.
+     *
+     * @param tasks task list to update
+     * @param ui interface used to show the confirmation
+     * @param storage storage used to persist the updated list
+     * @throws StorageException if the updated list cannot be saved
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws StorageException {
         tasks.add(task);
