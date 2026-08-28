@@ -1,3 +1,5 @@
+package soar.exception;
+
 /**
  * Represents an input problem that Soar can explain to the user and recover from.
  */

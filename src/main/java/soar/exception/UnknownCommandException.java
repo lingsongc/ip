@@ -1,3 +1,5 @@
+package soar.exception;
+
 /**
  * Signals that the first word of the user's input is not a supported command.
  */

@@ -1,3 +1,5 @@
+package soar.exception;
+
 /**
  * Represents malformed task data or a persistence failure that Soar can explain.
  */

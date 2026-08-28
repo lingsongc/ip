@@ -1,3 +1,5 @@
+package soar.parser;
+
 /**
  * Describes the flight-themed action used when a task-number command is incomplete.
  */

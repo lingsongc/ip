@@ -1,3 +1,12 @@
+package soar.command;
+
+import soar.exception.SoarException;
+import soar.parser.CommandType;
+import soar.storage.Storage;
+import soar.task.Task;
+import soar.task.TaskList;
+import soar.ui.Ui;
+
 /**
  * Marks one selected task as incomplete and persists the change.
  */

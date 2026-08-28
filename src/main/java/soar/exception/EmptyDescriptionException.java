@@ -1,3 +1,5 @@
+package soar.exception;
+
 /**
  * Signals that a task command does not include a task description.
  */

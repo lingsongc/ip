@@ -1,3 +1,5 @@
+package soar.parser;
+
 /**
  * Identifies a command that Soar accepts from the user.
  */

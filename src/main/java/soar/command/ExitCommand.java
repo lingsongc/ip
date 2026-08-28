@@ -1,3 +1,9 @@
+package soar.command;
+
+import soar.storage.Storage;
+import soar.task.TaskList;
+import soar.ui.Ui;
+
 /**
  * Ends the current Soar session after showing the farewell message.
  */
