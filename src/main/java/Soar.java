@@ -1,18 +1,10 @@
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Starts the Soar chatbot application.
  */
 public class Soar {
-    /** Format used when naming the requested date in query results. */
-    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
-
     /** Message shown when a task-list change cannot be safely persisted. */
     private static final String SAVE_ERROR_MESSAGE =
             "I couldn't save the task data, so that change was not kept. Please check the data file and try again.";
@@ -45,6 +37,7 @@ public class Soar {
                 Command executableCommand = switch (commandType) {
                 case BYE -> new ExitCommand();
                 case LIST -> new ListCommand();
+                case DATE -> new DateCommand(Parser.parseDate(command));
                 default -> null;
                 };
                 if (executableCommand != null) {
@@ -53,9 +46,7 @@ public class Soar {
                     continue;
                 }
 
-                if (commandType == CommandType.DATE) {
-                    showTasksOnDate(command, tasks, ui);
-                } else if (commandType == CommandType.MARK) {
+                if (commandType == CommandType.MARK) {
                     int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
                     Task task = tasks.get(taskIndex);
                     boolean wasDone = task.isDone();
@@ -118,25 +109,6 @@ public class Soar {
             rollback.run();
             throw new StorageException(SAVE_ERROR_MESSAGE);
         }
-    }
-
-    /**
-     * Prints deadlines and dated events occurring on a requested calendar date.
-     *
-     * @param input complete date command
-     * @param tasks current task list
-     * @param ui user interface that presents the matching tasks
-     * @throws InvalidTaskFormatException if the date is missing or unrecognized
-     */
-    private static void showTasksOnDate(String input, TaskList tasks, Ui ui)
-            throws InvalidTaskFormatException {
-        LocalDate date = Parser.parseDate(input);
-        String displayedDate = date.format(DISPLAY_DATE_FORMAT);
-        List<String> matches = tasks.findIndicesOn(date).stream()
-                .map(index -> (index + 1) + "." + tasks.get(index))
-                .toList();
-
-        ui.showTasksOnDate(displayedDate, matches);
     }
 
 }
