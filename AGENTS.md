@@ -54,6 +54,10 @@ After each update to application or test code:
 
 ## Git
 
+For every future commit in this repository, invoke the `$seedu-git-standard` skill before proposing
+or creating the commit message, and follow its commit-message rules. Also use the skill when naming
+branches. This requirement does not authorize creating a commit, branch, tag, or push without the
+user's explicit request.
+
 Use lightweight tags unless the user requests an annotated tag.
-When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
