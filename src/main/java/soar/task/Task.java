@@ -53,6 +53,16 @@ public abstract class Task {
     }
 
     /**
+     * Checks whether this task's description contains the supplied search text.
+     *
+     * @param keyword keyword or phrase to find
+     * @return {@code true} when the description contains the search text
+     */
+    public boolean descriptionContains(String keyword) {
+        return description.contains(keyword);
+    }
+
+    /**
      * Returns the icon used to show this task's completion status.
      *
      * @return {@code X} if the task is done, or a space otherwise

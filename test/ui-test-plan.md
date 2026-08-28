@@ -120,7 +120,7 @@ ____________________________________________________________
 Your task list is an open sky right now. Add a task before using 'mark'!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -390,10 +390,10 @@ Got it. I've added this task:
 Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -404,14 +404,14 @@ Nice! I've marked this task as done:
   [T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -426,7 +426,7 @@ Here are the tasks in your list:
 1.[T][ ] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -1416,6 +1416,75 @@ Add a date after 'date' so I know which day's flight plan to show!
 ____________________________________________________________
 ____________________________________________________________
 I couldn't understand the date '2019-02-29'. Use one of the supported deadline date or date-time formats!
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-013 — Find tasks by description keyword
+
+- Aim: Verify that find returns matching task descriptions in list order and handles no matches and a missing keyword.
+
+#### Inputs
+
+```text
+todo read book
+deadline return book /by 2019-06-06
+todo buy groceries
+mark 1
+mark 2
+find book
+find pencil
+find
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Jun 06 2019)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] buy groceries
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] read book
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [D][X] return book (by: Jun 06 2019)
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+1.[T][X] read book
+2.[D][X] return book (by: Jun 06 2019)
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+____________________________________________________________
+____________________________________________________________
+Add a keyword after 'find' so I know which tasks to look for!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!

@@ -14,6 +14,7 @@ import soar.command.Command;
 import soar.command.DateCommand;
 import soar.command.DeleteCommand;
 import soar.command.ExitCommand;
+import soar.command.FindCommand;
 import soar.command.ListCommand;
 import soar.command.MarkCommand;
 import soar.command.UnmarkCommand;
@@ -33,6 +34,7 @@ public class ParserTest {
         Map<String, Class<? extends Command>> commands = Map.ofEntries(
                 Map.entry("bye", ExitCommand.class),
                 Map.entry("list", ListCommand.class),
+                Map.entry("find book", FindCommand.class),
                 Map.entry("date 2019-10-15", DateCommand.class),
                 Map.entry("todo read book", AddCommand.class),
                 Map.entry("deadline submit report /by 2019-10-15", AddCommand.class),
@@ -103,6 +105,12 @@ public class ParserTest {
                 () -> assertMessageContains(InvalidTaskFormatException.class, "date", "after 'date'"),
                 () -> assertMessageContains(
                         InvalidTaskFormatException.class, "date 2019-02-29", "2019-02-29"));
+    }
+
+    /** Verifies that a find command requires non-empty search text. */
+    @Test
+    public void parse_findWithoutKeyword_throwsInvalidTaskFormatException() {
+        assertMessageContains(InvalidTaskFormatException.class, "find", "after 'find'");
     }
 
     /** Parses input and verifies both the exception type and a useful part of its message. */

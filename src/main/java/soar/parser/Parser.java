@@ -7,6 +7,7 @@ import soar.command.Command;
 import soar.command.DateCommand;
 import soar.command.DeleteCommand;
 import soar.command.ExitCommand;
+import soar.command.FindCommand;
 import soar.command.ListCommand;
 import soar.command.MarkCommand;
 import soar.command.UnmarkCommand;
@@ -40,6 +41,7 @@ public class Parser {
         return switch (commandType) {
         case BYE -> new ExitCommand();
         case LIST -> new ListCommand();
+        case FIND -> new FindCommand(parseKeyword(input));
         case DATE -> new DateCommand(parseDate(input));
         case TODO, DEADLINE, EVENT -> new AddCommand(parseTask(input, commandType));
         case MARK -> new MarkCommand(parseTaskNumber(input, commandType));
@@ -131,6 +133,22 @@ public class Parser {
                     + "'. Use one of the supported deadline date or date-time formats!");
         }
         return requestedDate.get();
+    }
+
+    /**
+     * Parses the text supplied to a task-description search.
+     *
+     * @param input complete find command
+     * @return non-empty keyword or phrase to find
+     * @throws InvalidTaskFormatException if no search text was supplied
+     */
+    private static String parseKeyword(String input) throws InvalidTaskFormatException {
+        String keyword = argumentsAfter(input, CommandType.FIND);
+        if (keyword.isEmpty()) {
+            throw new InvalidTaskFormatException(
+                    "Add a keyword after 'find' so I know which tasks to look for!");
+        }
+        return keyword;
     }
 
     /** Builds a todo after checking its description. */
