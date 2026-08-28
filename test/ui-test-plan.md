@@ -2,7 +2,7 @@
 
 ## Configuration
 
-- Build command: `javac -d _temp/ui-test-classes src/main/java/*.java test/StorageTest.java test/TaskListTest.java && java -cp _temp/ui-test-classes StorageTest && java -cp _temp/ui-test-classes TaskListTest`
+- Build command: `javac -d _temp/ui-test-classes src/main/java/*.java test/StorageTest.java test/TaskListTest.java test/CommandTest.java && java -cp _temp/ui-test-classes StorageTest && java -cp _temp/ui-test-classes TaskListTest && java -cp _temp/ui-test-classes CommandTest`
 - Run command: `powershell -NoProfile -ExecutionPolicy Bypass -File test/run-ui-test.ps1`
 - Working directory: `.`
 - Timeout seconds: `60`

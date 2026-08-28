@@ -38,6 +38,8 @@ public class Soar {
                 case BYE -> new ExitCommand();
                 case LIST -> new ListCommand();
                 case DATE -> new DateCommand(Parser.parseDate(command));
+                case TODO, DEADLINE, EVENT ->
+                    new AddCommand(Parser.parseTask(command, commandType));
                 default -> null;
                 };
                 if (executableCommand != null) {
@@ -66,31 +68,11 @@ public class Soar {
                     saveChange(storage, tasks,
                             () -> tasks.restoreDeletedTask(taskIndex, removedTask));
                     ui.showTaskDeleted(removedTask, tasks.size());
-                } else if (commandType == CommandType.TODO
-                        || commandType == CommandType.DEADLINE
-                        || commandType == CommandType.EVENT) {
-                    addTask(Parser.parseTask(command, commandType), tasks, storage, ui);
                 }
             } catch (SoarException e) {
                 ui.showError(e.getMessage());
             }
         }
-    }
-
-    /**
-     * Adds and persists a task, rolling back the list if saving fails.
-     *
-     * @param task task to add
-     * @param tasks current task list
-     * @param storage persistence service
-     * @param ui user interface that presents the confirmation
-     * @throws StorageException if the updated list cannot be saved
-     */
-    private static void addTask(Task task, TaskList tasks, Storage storage, Ui ui)
-            throws StorageException {
-        tasks.add(task);
-        saveChange(storage, tasks, () -> tasks.delete(tasks.size() - 1));
-        ui.showTaskAdded(task, tasks.size());
     }
 
     /**
