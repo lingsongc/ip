@@ -53,58 +53,44 @@ public class ParserTest {
     /** Verifies that command lookalikes, wrong casing, and forbidden arguments are rejected. */
     @Test
     public void parse_unrecognizedCommandShapes_throwsUnknownCommandException() {
-        assertAll(
-                () -> assertThrows(UnknownCommandException.class, () -> Parser.parse("")),
-                () -> assertThrows(UnknownCommandException.class, () -> Parser.parse("BYE")),
-                () -> assertThrows(UnknownCommandException.class, () -> Parser.parse("bye now")),
-                () -> assertThrows(UnknownCommandException.class, () -> Parser.parse("list extra")),
-                () -> assertThrows(UnknownCommandException.class, () -> Parser.parse("todoist task")),
-                () -> assertThrows(UnknownCommandException.class, () -> Parser.parse("mark1")));
+        assertThrows(UnknownCommandException.class, () -> Parser.parse(""));
+        assertThrows(UnknownCommandException.class, () -> Parser.parse("BYE"));
+        assertThrows(UnknownCommandException.class, () -> Parser.parse("bye now"));
+        assertThrows(UnknownCommandException.class, () -> Parser.parse("list extra"));
+        assertThrows(UnknownCommandException.class, () -> Parser.parse("todoist task"));
+        assertThrows(UnknownCommandException.class, () -> Parser.parse("mark1"));
     }
 
     /** Verifies task descriptions and scheduling fields before an add command is created. */
     @Test
     public void parse_invalidTaskDetails_throwsSpecificException() {
-        assertAll(
-                () -> assertMessageContains(
-                        EmptyDescriptionException.class, "todo", "todo"),
-                () -> assertMessageContains(
-                        InvalidTaskFormatException.class, "deadline report", "'/by'"),
-                () -> assertMessageContains(
-                        EmptyDescriptionException.class, "deadline /by 2019-10-15", "deadline"),
-                () -> assertMessageContains(
-                        InvalidTaskFormatException.class, "deadline report /by", "empty"),
-                () -> assertMessageContains(
-                        InvalidTaskFormatException.class,
-                        "deadline report /by 2019-02-29", "2019-02-29"),
-                () -> assertMessageContains(
-                        InvalidTaskFormatException.class, "event meeting /from 2pm", "'/to'"),
-                () -> assertMessageContains(
-                        EmptyDescriptionException.class, "event /from 2pm /to 3pm", "event"),
-                () -> assertMessageContains(
-                        InvalidTaskFormatException.class,
-                        "event meeting /from /to 3pm", "incomplete"));
+        assertMessageContains(EmptyDescriptionException.class, "todo", "todo");
+        assertMessageContains(InvalidTaskFormatException.class, "deadline report", "'/by'");
+        assertMessageContains(EmptyDescriptionException.class, "deadline /by 2019-10-15", "deadline");
+        assertMessageContains(InvalidTaskFormatException.class, "deadline report /by", "empty");
+        assertMessageContains(InvalidTaskFormatException.class,
+                "deadline report /by 2019-02-29", "2019-02-29");
+        assertMessageContains(InvalidTaskFormatException.class, "event meeting /from 2pm", "'/to'");
+        assertMessageContains(EmptyDescriptionException.class, "event /from 2pm /to 3pm", "event");
+        assertMessageContains(InvalidTaskFormatException.class,
+                "event meeting /from /to 3pm", "incomplete");
     }
 
     /** Verifies missing, fractional, and overflowing task numbers are rejected during parsing. */
     @Test
     public void parse_invalidTaskNumbers_throwsInvalidTaskNumberException() {
-        assertAll(
-                () -> assertMessageContains(InvalidTaskNumberException.class, "mark", "after 'mark'"),
-                () -> assertMessageContains(InvalidTaskNumberException.class, "unmark 1.5", "whole"),
-                () -> assertMessageContains(InvalidTaskNumberException.class, "delete two", "whole"),
-                () -> assertMessageContains(
-                        InvalidTaskNumberException.class,
-                        "mark 999999999999999999999", "whole"));
+        assertMessageContains(InvalidTaskNumberException.class, "mark", "after 'mark'");
+        assertMessageContains(InvalidTaskNumberException.class, "unmark 1.5", "whole");
+        assertMessageContains(InvalidTaskNumberException.class, "delete two", "whole");
+        assertMessageContains(InvalidTaskNumberException.class,
+                "mark 999999999999999999999", "whole");
     }
 
     /** Verifies date queries reject missing and impossible dates with useful guidance. */
     @Test
     public void parse_invalidDateQueries_throwsInvalidTaskFormatException() {
-        assertAll(
-                () -> assertMessageContains(InvalidTaskFormatException.class, "date", "after 'date'"),
-                () -> assertMessageContains(
-                        InvalidTaskFormatException.class, "date 2019-02-29", "2019-02-29"));
+        assertMessageContains(InvalidTaskFormatException.class, "date", "after 'date'");
+        assertMessageContains(InvalidTaskFormatException.class, "date 2019-02-29", "2019-02-29");
     }
 
     /** Verifies that a find command requires non-empty search text. */
