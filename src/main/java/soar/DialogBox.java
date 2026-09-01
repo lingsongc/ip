@@ -1,7 +1,11 @@
 package soar;
 
+import java.io.IOException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -14,25 +18,25 @@ import javafx.scene.layout.HBox;
  */
 public class DialogBox extends HBox {
 
-    private final Label text;
-    private final ImageView displayPicture;
+    @FXML
+    private Label dialog;
 
-    /**
-     * Creates a dialog box containing the specified text and image.
-     *
-     * @param message Message to display.
-     * @param image Image displayed beside the message.
-     */
-    public DialogBox(String message, Image image) {
-        text = new Label(message);
-        displayPicture = new ImageView(image);
+    @FXML
+    private ImageView displayPicture;
 
-        text.setWrapText(true);
-        displayPicture.setFitWidth(100.0);
-        displayPicture.setFitHeight(100.0);
-        setAlignment(Pos.TOP_RIGHT);
+    /** Creates a dialog box populated with the supplied message and image. */
+    private DialogBox(String message, Image image) {
+        FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
+        fxmlLoader.setController(this);
+        fxmlLoader.setRoot(this);
+        try {
+            fxmlLoader.load();
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load the dialog box view", e);
+        }
 
-        getChildren().addAll(text, displayPicture);
+        dialog.setText(message);
+        displayPicture.setImage(image);
     }
 
     /**
