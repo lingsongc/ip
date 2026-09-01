@@ -42,21 +42,19 @@ public class DateTimeParserTest {
     /** Verifies that dates which do not exist are rejected. */
     @Test
     public void parseDate_impossibleDates_returnsEmpty() {
-        assertAll(
-                () -> assertTrue(DateTimeParser.parseDate("2019-02-29").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDate("31/04/2019").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDate("2019-13-01").isEmpty()));
+        assertTrue(DateTimeParser.parseDate("2019-02-29").isEmpty());
+        assertTrue(DateTimeParser.parseDate("31/04/2019").isEmpty());
+        assertTrue(DateTimeParser.parseDate("2019-13-01").isEmpty());
     }
 
     /** Verifies that date-time, empty, malformed, and unsupported inputs are rejected. */
     @Test
     public void parseDate_unrecognizedInputs_returnsEmpty() {
-        assertAll(
-                () -> assertTrue(DateTimeParser.parseDate("2019-10-15T18:00").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDate("").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDate("not a date").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDate("15-10-2019").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDate(" 2019-10-15 ").isEmpty()));
+        assertTrue(DateTimeParser.parseDate("2019-10-15T18:00").isEmpty());
+        assertTrue(DateTimeParser.parseDate("").isEmpty());
+        assertTrue(DateTimeParser.parseDate("not a date").isEmpty());
+        assertTrue(DateTimeParser.parseDate("15-10-2019").isEmpty());
+        assertTrue(DateTimeParser.parseDate(" 2019-10-15 ").isEmpty());
     }
 
     /** Verifies that every documented date-time format is accepted. */
@@ -86,22 +84,20 @@ public class DateTimeParserTest {
     /** Verifies strict date and time validation. */
     @Test
     public void parseDateTime_impossibleValues_returnsEmpty() {
-        assertAll(
-                () -> assertTrue(DateTimeParser.parseDateTime("29/02/2019 1800").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDateTime("31/04/2019 1800").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDateTime("2019-10-15 24:00").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDateTime("2019-10-15 18:60").isEmpty()));
+        assertTrue(DateTimeParser.parseDateTime("29/02/2019 1800").isEmpty());
+        assertTrue(DateTimeParser.parseDateTime("31/04/2019 1800").isEmpty());
+        assertTrue(DateTimeParser.parseDateTime("2019-10-15 24:00").isEmpty());
+        assertTrue(DateTimeParser.parseDateTime("2019-10-15 18:60").isEmpty());
     }
 
     /** Verifies that date-only, empty, malformed, and padded inputs are rejected. */
     @Test
     public void parseDateTime_unrecognizedInputs_returnsEmpty() {
-        assertAll(
-                () -> assertTrue(DateTimeParser.parseDateTime("2019-10-15").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDateTime("").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDateTime("not a date-time").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDateTime("15-10-2019 18:00").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseDateTime(" 2019-10-15T18:00 ").isEmpty()));
+        assertTrue(DateTimeParser.parseDateTime("2019-10-15").isEmpty());
+        assertTrue(DateTimeParser.parseDateTime("").isEmpty());
+        assertTrue(DateTimeParser.parseDateTime("not a date-time").isEmpty());
+        assertTrue(DateTimeParser.parseDateTime("15-10-2019 18:00").isEmpty());
+        assertTrue(DateTimeParser.parseDateTime(" 2019-10-15T18:00 ").isEmpty());
     }
 
     /** Verifies that every documented date and date-time format is accepted. */
@@ -133,19 +129,17 @@ public class DateTimeParserTest {
     /** Verifies that dates which do not exist are rejected. */
     @Test
     public void parseCalendarDate_impossibleDates_returnsEmpty() {
-        assertAll(
-                () -> assertTrue(DateTimeParser.parseCalendarDate("2019-02-29").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseCalendarDate("31/04/2019").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseCalendarDate("2019-13-01").isEmpty()));
+        assertTrue(DateTimeParser.parseCalendarDate("2019-02-29").isEmpty());
+        assertTrue(DateTimeParser.parseCalendarDate("31/04/2019").isEmpty());
+        assertTrue(DateTimeParser.parseCalendarDate("2019-13-01").isEmpty());
     }
 
     /** Verifies that empty, malformed, and unsupported inputs are rejected. */
     @Test
     public void parseCalendarDate_unrecognizedInputs_returnsEmpty() {
-        assertAll(
-                () -> assertTrue(DateTimeParser.parseCalendarDate("").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseCalendarDate("not a date").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseCalendarDate("15-10-2019").isEmpty()),
-                () -> assertTrue(DateTimeParser.parseCalendarDate(" 2019-10-15 ").isEmpty()));
+        assertTrue(DateTimeParser.parseCalendarDate("").isEmpty());
+        assertTrue(DateTimeParser.parseCalendarDate("not a date").isEmpty());
+        assertTrue(DateTimeParser.parseCalendarDate("15-10-2019").isEmpty());
+        assertTrue(DateTimeParser.parseCalendarDate(" 2019-10-15 ").isEmpty());
     }
 }

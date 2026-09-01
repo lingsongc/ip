@@ -39,14 +39,14 @@ public class Parser {
     public static Command parse(String input) throws SoarException {
         CommandType commandType = parseCommand(input);
         return switch (commandType) {
-        case BYE -> new ExitCommand();
-        case LIST -> new ListCommand();
-        case FIND -> new FindCommand(parseKeyword(input));
-        case DATE -> new DateCommand(parseDate(input));
-        case TODO, DEADLINE, EVENT -> new AddCommand(parseTask(input, commandType));
-        case MARK -> new MarkCommand(parseTaskNumber(input, commandType));
-        case UNMARK -> new UnmarkCommand(parseTaskNumber(input, commandType));
-        case DELETE -> new DeleteCommand(parseTaskNumber(input, commandType));
+            case BYE -> new ExitCommand();
+            case LIST -> new ListCommand();
+            case FIND -> new FindCommand(parseKeyword(input));
+            case DATE -> new DateCommand(parseDate(input));
+            case TODO, DEADLINE, EVENT -> new AddCommand(parseTask(input, commandType));
+            case MARK -> new MarkCommand(parseTaskNumber(input, commandType));
+            case UNMARK -> new UnmarkCommand(parseTaskNumber(input, commandType));
+            case DELETE -> new DeleteCommand(parseTaskNumber(input, commandType));
         };
     }
 
@@ -76,11 +76,11 @@ public class Parser {
      */
     private static Task parseTask(String input, CommandType commandType) throws SoarException {
         return switch (commandType) {
-        case TODO -> parseToDo(input);
-        case DEADLINE -> parseDeadline(input);
-        case EVENT -> parseEvent(input);
-        default -> throw new IllegalArgumentException(
-                "Only todo, deadline, and event commands describe new tasks");
+            case TODO -> parseToDo(input);
+            case DEADLINE -> parseDeadline(input);
+            case EVENT -> parseEvent(input);
+            default -> throw new IllegalArgumentException(
+                    "Only todo, deadline, and event commands describe new tasks");
         };
     }
 

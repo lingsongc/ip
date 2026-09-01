@@ -1,6 +1,5 @@
 package soar.command;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -104,12 +103,10 @@ public class CommandTest {
         ToDo second = new ToDo("second");
         TaskList deleteTasks = new TaskList(List.of(first, second));
 
-        assertAll(
-                () -> assertSaveFailure(
-                        new AddCommand(new ToDo("added")), addTasks, failingStorage),
-                () -> assertSaveFailure(new MarkCommand(1), markTasks, failingStorage),
-                () -> assertSaveFailure(new UnmarkCommand(1), unmarkTasks, failingStorage),
-                () -> assertSaveFailure(new DeleteCommand(1), deleteTasks, failingStorage));
+        assertSaveFailure(new AddCommand(new ToDo("added")), addTasks, failingStorage);
+        assertSaveFailure(new MarkCommand(1), markTasks, failingStorage);
+        assertSaveFailure(new UnmarkCommand(1), unmarkTasks, failingStorage);
+        assertSaveFailure(new DeleteCommand(1), deleteTasks, failingStorage);
 
         assertTrue(addTasks.asList().isEmpty());
         assertFalse(markTasks.get(0).isDone());
@@ -125,21 +122,20 @@ public class CommandTest {
         ToDo task = new ToDo("unchanged");
         TaskList oneTask = new TaskList(List.of(task));
 
-        assertAll(
-                () -> assertThrows(InvalidTaskNumberException.class,
-                        () -> new MarkCommand(1).execute(emptyTasks, silentUi, storage)),
-                () -> assertThrows(InvalidTaskNumberException.class,
-                        () -> new UnmarkCommand(0).execute(oneTask, silentUi, storage)),
-                () -> assertThrows(InvalidTaskNumberException.class,
-                        () -> new DeleteCommand(2).execute(oneTask, silentUi, storage)));
+        assertThrows(InvalidTaskNumberException.class, () ->
+                new MarkCommand(1).execute(emptyTasks, silentUi, storage));
+        assertThrows(InvalidTaskNumberException.class, () ->
+                new UnmarkCommand(0).execute(oneTask, silentUi, storage));
+        assertThrows(InvalidTaskNumberException.class, () ->
+                new DeleteCommand(2).execute(oneTask, silentUi, storage));
         assertEquals(List.of(task), oneTask.asList());
         assertFalse(task.isDone());
     }
 
     /** Executes a mutation and verifies save failure uses the shared rollback message. */
     private void assertSaveFailure(Command command, TaskList tasks, Storage storage) {
-        StorageException exception = assertThrows(StorageException.class,
-                () -> command.execute(tasks, silentUi, storage));
+        StorageException exception = assertThrows(StorageException.class, () ->
+                command.execute(tasks, silentUi, storage));
         assertTrue(exception.getMessage().contains("change was not kept"));
     }
 

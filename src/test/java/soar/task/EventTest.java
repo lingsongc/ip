@@ -1,6 +1,5 @@
 package soar.task;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,12 +16,11 @@ public class EventTest {
     public void occursOn_fullyDatedRange_matchesInclusiveBoundaries() {
         Event event = new Event("conference", "2019-10-14T09:00", "2019-10-16T17:00");
 
-        assertAll(
-                () -> assertFalse(event.occursOn(LocalDate.of(2019, 10, 13))),
-                () -> assertTrue(event.occursOn(LocalDate.of(2019, 10, 14))),
-                () -> assertTrue(event.occursOn(LocalDate.of(2019, 10, 15))),
-                () -> assertTrue(event.occursOn(LocalDate.of(2019, 10, 16))),
-                () -> assertFalse(event.occursOn(LocalDate.of(2019, 10, 17))));
+        assertFalse(event.occursOn(LocalDate.of(2019, 10, 13)));
+        assertTrue(event.occursOn(LocalDate.of(2019, 10, 14)));
+        assertTrue(event.occursOn(LocalDate.of(2019, 10, 15)));
+        assertTrue(event.occursOn(LocalDate.of(2019, 10, 16)));
+        assertFalse(event.occursOn(LocalDate.of(2019, 10, 17)));
     }
 
     /** Verifies that one dated endpoint matches only that endpoint's date. */
@@ -31,11 +29,10 @@ public class EventTest {
         Event datedStart = new Event("starts", "2019-10-15", "sometime");
         Event datedEnd = new Event("ends", "sometime", "16/10/2019");
 
-        assertAll(
-                () -> assertTrue(datedStart.occursOn(LocalDate.of(2019, 10, 15))),
-                () -> assertFalse(datedStart.occursOn(LocalDate.of(2019, 10, 16))),
-                () -> assertTrue(datedEnd.occursOn(LocalDate.of(2019, 10, 16))),
-                () -> assertFalse(datedEnd.occursOn(LocalDate.of(2019, 10, 15))));
+        assertTrue(datedStart.occursOn(LocalDate.of(2019, 10, 15)));
+        assertFalse(datedStart.occursOn(LocalDate.of(2019, 10, 16)));
+        assertTrue(datedEnd.occursOn(LocalDate.of(2019, 10, 16)));
+        assertFalse(datedEnd.occursOn(LocalDate.of(2019, 10, 15)));
     }
 
     /** Verifies that an event with no parseable dates never matches a date query. */
