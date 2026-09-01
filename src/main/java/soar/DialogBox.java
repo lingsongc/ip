@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
  * Displays a message together with its author's image.
  */
 public class DialogBox extends HBox {
+    private static final String REPLY_LABEL_STYLE_CLASS = "reply-label";
 
     @FXML
     private Label dialog;
@@ -63,9 +64,10 @@ public class DialogBox extends HBox {
         return dialogBox;
     }
 
-    /** Flips this dialog box so its image appears on the left. */
+    /** Flips this dialog box so its image and speech-bubble tail appear on the left. */
     private void flip() {
         setAlignment(Pos.TOP_LEFT);
+        dialog.getStyleClass().add(REPLY_LABEL_STYLE_CLASS);
         ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
         FXCollections.reverse(children);
         getChildren().setAll(children);
