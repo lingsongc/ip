@@ -27,8 +27,8 @@ public class TaskListTest {
 
         assertEquals(1, tasks.size());
         assertSame(original, tasks.get(0));
-        assertThrows(UnsupportedOperationException.class,
-                () -> tasks.asList().add(new ToDo("bypass")));
+        assertThrows(UnsupportedOperationException.class, () ->
+                tasks.asList().add(new ToDo("bypass")));
     }
 
     /** Verifies add, delete, and restoration at the original position. */
@@ -79,8 +79,8 @@ public class TaskListTest {
         assertEquals(List.of(1, 2), tasks.findIndicesOn(LocalDate.of(2019, 10, 15)));
         assertEquals(List.of(2), tasks.findIndicesOn(LocalDate.of(2019, 10, 16)));
         assertTrue(tasks.findIndicesOn(LocalDate.of(2019, 10, 17)).isEmpty());
-        assertThrows(UnsupportedOperationException.class,
-                () -> tasks.findIndicesOn(LocalDate.of(2019, 10, 15)).add(3));
+        assertThrows(UnsupportedOperationException.class, () ->
+                tasks.findIndicesOn(LocalDate.of(2019, 10, 15)).add(3));
     }
 
     /** Verifies description searches preserve order and ignore task metadata. */
@@ -94,7 +94,7 @@ public class TaskListTest {
         assertEquals(List.of(first, second), tasks.findByDescription("book"));
         assertTrue(tasks.findByDescription("Book").isEmpty());
         assertTrue(tasks.findByDescription("June").isEmpty());
-        assertThrows(UnsupportedOperationException.class,
-                () -> tasks.findByDescription("book").add(new ToDo("another book")));
+        assertThrows(UnsupportedOperationException.class, () ->
+                tasks.findByDescription("book").add(new ToDo("another book")));
     }
 }

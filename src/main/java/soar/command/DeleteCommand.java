@@ -35,8 +35,8 @@ public class DeleteCommand extends Command {
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SoarException {
         int taskIndex = requireTaskIndex(taskNumber, tasks, CommandType.DELETE);
         Task removedTask = tasks.delete(taskIndex);
-        saveChange(storage, tasks,
-                () -> tasks.restoreDeletedTask(taskIndex, removedTask));
+        saveChange(storage, tasks, () ->
+                tasks.restoreDeletedTask(taskIndex, removedTask));
         ui.showTaskDeleted(removedTask, tasks.size());
     }
 }

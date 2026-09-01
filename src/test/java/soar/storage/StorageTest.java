@@ -113,12 +113,12 @@ public class StorageTest {
 
     /** Verifies failed replacement does not leave a temporary save file behind. */
     @Test
-    public void save_targetIsDirectory_throwsIOExceptionAndCleansTemporaryFile() throws Exception {
+    public void save_targetIsDirectory_throwsIoExceptionAndCleansTemporaryFile() throws Exception {
         Path dataFile = testDirectory.resolve("target-directory");
         Files.createDirectories(dataFile);
 
-        assertThrows(IOException.class,
-                () -> new Storage(dataFile).save(List.of(new ToDo("cannot save"))));
+        assertThrows(IOException.class, () ->
+                new Storage(dataFile).save(List.of(new ToDo("cannot save"))));
 
         try (var paths = Files.list(testDirectory)) {
             assertFalse(paths.anyMatch(path -> path.getFileName().toString()
@@ -131,8 +131,8 @@ public class StorageTest {
     private void assertInvalid(Path dataFile, List<String> lines, String... expectedMessages)
             throws Exception {
         Files.write(dataFile, lines);
-        StorageException exception = assertThrows(StorageException.class,
-                () -> new Storage(dataFile).load());
+        StorageException exception = assertThrows(StorageException.class, () ->
+                new Storage(dataFile).load());
         for (String expectedMessage : expectedMessages) {
             assertTrue(exception.getMessage().contains(expectedMessage), exception.getMessage());
         }

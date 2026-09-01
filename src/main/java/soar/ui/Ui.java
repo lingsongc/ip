@@ -117,7 +117,8 @@ public class Ui {
      *
      * @param task Added task.
      * @param taskCount Number of tasks after the addition.
-     */    public void showTaskAdded(Task task, int taskCount) {
+     */
+    public void showTaskAdded(Task task, int taskCount) {
         showFramed(List.of(
                 "Got it. I've added this task:",
                 "  " + task,
