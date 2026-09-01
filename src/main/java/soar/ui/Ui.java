@@ -2,7 +2,9 @@ package soar.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import soar.task.Task;
 
@@ -16,11 +18,34 @@ public class Ui {
     /** Console input used to read commands. */
     private final Scanner scanner;
 
+    /** Destination that receives each displayed line. */
+    private final Consumer<String> output;
+
+    /** Whether responses should be surrounded by console separators. */
+    private final boolean isFramed;
+
     /**
      * Creates a user interface connected to standard input.
      */
     public Ui() {
-        scanner = new Scanner(System.in);
+        this(new Scanner(System.in), System.out::println, true);
+    }
+
+    /** Creates a user interface with the specified input, output, and framing behavior. */
+    private Ui(Scanner scanner, Consumer<String> output, boolean isFramed) {
+        this.scanner = Objects.requireNonNull(scanner, "Input scanner must not be null");
+        this.output = Objects.requireNonNull(output, "Output destination must not be null");
+        this.isFramed = isFramed;
+    }
+
+    /**
+     * Creates a user interface that sends unframed response lines to a consumer.
+     *
+     * @param output Destination that receives each response line.
+     * @return user interface suitable for collecting a response
+     */
+    public static Ui createResponseUi(Consumer<String> output) {
+        return new Ui(new Scanner(""), output, false);
     }
 
     /**
@@ -32,11 +57,11 @@ public class Ui {
                 + "\\___ \\ / _ \\ / _` | '__| \n"
                 + " ___) | (_) | (_| | |    \n"
                 + "|____/ \\___/ \\__,_|_|    ";
-        System.out.println(separator());
-        System.out.println(banner);
-        System.out.println("Hey there! I'm Soar, your upbeat little sidekick!");
-        System.out.println("What exciting thing can I help you tackle today?");
-        System.out.println(separator());
+        output.accept(separator());
+        output.accept(banner);
+        output.accept("Hey there! I'm Soar, your upbeat little sidekick!");
+        output.accept("What exciting thing can I help you tackle today?");
+        output.accept(separator());
     }
 
     /**
@@ -79,9 +104,11 @@ public class Ui {
      * @param details Cause reported by storage or path validation.
      */
     public void showLoadingError(String details) {
-        System.out.println("I couldn't load the task data safely: " + details);
-        System.out.println("Please repair or move the data file, then restart Soar.");
-        System.out.println(separator());
+        output.accept("I couldn't load the task data safely: " + details);
+        output.accept("Please repair or move the data file, then restart Soar.");
+        if (isFramed) {
+            output.accept(separator());
+        }
     }
 
     /**
@@ -175,9 +202,13 @@ public class Ui {
 
     /** Shows response lines surrounded by the standard separator. */
     private void showFramed(List<String> lines) {
-        System.out.println(separator());
-        lines.forEach(System.out::println);
-        System.out.println(separator());
+        if (isFramed) {
+            output.accept(separator());
+        }
+        lines.forEach(output);
+        if (isFramed) {
+            output.accept(separator());
+        }
     }
 
     /** Returns the line used to frame output without storing duplicate text. */

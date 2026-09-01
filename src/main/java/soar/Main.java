@@ -15,9 +15,13 @@ import javafx.stage.Stage;
  * Displays the JavaFX graphical user interface.
  */
 public class Main extends Application {
+    /** Greeting shown when the chat window opens. */
+    private static final String WELCOME_MESSAGE = "Hey there! I'm Soar, your upbeat little sidekick!\n"
+            + "What exciting thing can I help you tackle today?";
 
     private final Image userImage = new Image(getClass().getResourceAsStream("/images/user.png"));
     private final Image soarImage = new Image(getClass().getResourceAsStream("/images/soar.png"));
+    private final Soar soar = new Soar();
 
     private ScrollPane scrollPane;
     private VBox dialogContainer;
@@ -33,9 +37,7 @@ public class Main extends Application {
 
         userInput = new TextField();
         sendButton = new Button("Send");
-
-        DialogBox dialogBox = new DialogBox("Hello!", userImage);
-        dialogContainer.getChildren().add(dialogBox);
+        dialogContainer.getChildren().add(DialogBox.getSoarDialog(WELCOME_MESSAGE, soarImage));
 
         AnchorPane mainLayout = new AnchorPane();
         mainLayout.getChildren().addAll(scrollPane, userInput, sendButton);
@@ -64,6 +66,20 @@ public class Main extends Application {
         AnchorPane.setLeftAnchor(userInput, 1.0);
         AnchorPane.setBottomAnchor(userInput, 1.0);
 
+        sendButton.setOnMouseClicked(event -> handleUserInput());
+        userInput.setOnAction(event -> handleUserInput());
+        dialogContainer.heightProperty().addListener(observable -> scrollPane.setVvalue(1.0));
+
         stage.show();
+    }
+
+    /** Creates and displays dialog boxes for the user's input and Soar's response. */
+    private void handleUserInput() {
+        String userText = userInput.getText();
+        String soarText = soar.getResponse(userText);
+        dialogContainer.getChildren().addAll(
+                DialogBox.getUserDialog(userText, userImage),
+                DialogBox.getSoarDialog(soarText, soarImage));
+        userInput.clear();
     }
 }
