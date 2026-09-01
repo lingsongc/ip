@@ -23,7 +23,7 @@ public class Main extends Application {
 
         stage.setScene(new Scene(mainLayout));
         stage.setTitle("Soar");
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setMinHeight(600.0);
         stage.setMinWidth(400.0);
         stage.show();
