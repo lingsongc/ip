@@ -171,6 +171,30 @@ public class Ui {
     }
 
     /**
+     * Shows the task before and after a successful edit.
+     *
+     * @param originalTask Task before the edit.
+     * @param updatedTask Task after the edit.
+     */
+    public void showTaskEdited(Task originalTask, Task updatedTask) {
+        showFramed(List.of(
+                "I've updated this task:",
+                "  Before: " + originalTask,
+                "  After:  " + updatedTask));
+    }
+
+    /**
+     * Explains that valid edit values already match the selected task.
+     *
+     * @param task Unchanged task.
+     */
+    public void showTaskUnchanged(Task task) {
+        showFramed(List.of(
+                "That task already has those details:",
+                "  " + task));
+    }
+
+    /**
      * Shows tasks matching a requested date, or explains that there are none.
      *
      * @param displayedDate Requested date formatted for display.

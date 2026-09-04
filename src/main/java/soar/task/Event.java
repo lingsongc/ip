@@ -30,6 +30,24 @@ public class Event extends Task {
     }
 
     /**
+     * Returns the event's start value.
+     *
+     * @return free-form start value
+     */
+    public String getFrom() {
+        return from;
+    }
+
+    /**
+     * Returns the event's end value.
+     *
+     * @return free-form end value
+     */
+    public String getTo() {
+        return to;
+    }
+
+    /**
      * Returns whether this event occurs on a calendar date.
      *
      * <p>A fully dated start and end form an inclusive range. If only one end

@@ -81,6 +81,17 @@ public class TaskList {
     }
 
     /**
+     * Replaces and returns the task at a zero-based index.
+     *
+     * @param index Zero-based task index.
+     * @param task Replacement task.
+     * @return task that previously occupied the index
+     */
+    public Task replace(int index, Task task) {
+        return tasks.set(index, Objects.requireNonNull(task, "Task must not be null"));
+    }
+
+    /**
      * Restores a task at its previous position after a failed save.
      *
      * @param index Zero-based position at which the task belonged.

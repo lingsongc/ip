@@ -67,6 +67,22 @@ public class TaskListTest {
         assertTrue(task.isDone());
     }
 
+    /** Verifies replacement returns the original and retains list size and position. */
+    @Test
+    public void replace_existingTask_replacesAtOriginalPosition() {
+        ToDo first = new ToDo("first");
+        ToDo original = new ToDo("original");
+        ToDo replacement = new ToDo("replacement");
+        TaskList tasks = new TaskList(List.of(first, original));
+
+        assertSame(original, tasks.replace(1, replacement));
+
+        assertEquals(2, tasks.size());
+        assertSame(first, tasks.get(0));
+        assertSame(replacement, tasks.get(1));
+        assertThrows(NullPointerException.class, () -> tasks.replace(1, null));
+    }
+
     /** Verifies matching indices for deadlines and inclusive dated event ranges. */
     @Test
     public void findIndicesOn_mixedTasks_returnsOriginalMatchingIndices() {

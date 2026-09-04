@@ -11,6 +11,7 @@ public enum CommandType {
     MARK("mark", TaskAction.COMPLETE_FLIGHT),
     UNMARK("unmark", TaskAction.RETURN_TO_FLIGHT_PATH),
     DELETE("delete", TaskAction.SHOT_DOWN),
+    EDIT("edit", TaskAction.UPDATED),
     TODO("todo", true),
     DEADLINE("deadline", true),
     EVENT("event", true);
