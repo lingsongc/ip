@@ -11,10 +11,10 @@ import soar.storage.Storage;
  */
 public class Event extends Task {
     /** Date or time at which the event starts. */
-    protected String from;
+    private final String from;
 
     /** Date or time at which the event ends. */
-    protected String to;
+    private final String to;
 
     /**
      * Creates an incomplete event with the given description and time range.
@@ -66,7 +66,7 @@ public class Event extends Task {
      */
     @Override
     public String toDataString() {
-        return "E | " + getDataStatus() + " | " + Storage.escapeField(description)
+        return "E | " + getDataStatus() + " | " + Storage.escapeField(getDescription())
                 + " | " + Storage.escapeField(from) + " | " + Storage.escapeField(to);
     }
 
