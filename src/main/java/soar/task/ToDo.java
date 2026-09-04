@@ -32,6 +32,6 @@ public class ToDo extends Task {
      */
     @Override
     public String toDataString() {
-        return "T | " + getDataStatus() + " | " + Storage.escapeField(description);
+        return "T | " + getDataStatus() + " | " + Storage.escapeField(getDescription());
     }
 }
