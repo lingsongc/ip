@@ -5,10 +5,10 @@ package soar.task;
  */
 public abstract class Task {
     /** Description of what needs to be done. */
-    protected String description;
+    private final String description;
 
     /** Whether this task has been completed. */
-    protected boolean isDone;
+    private boolean isDone;
 
     /**
      * Creates an incomplete task with the given description.
@@ -41,6 +41,15 @@ public abstract class Task {
      */
     protected String getDataStatus() {
         return isDone ? "1" : "0";
+    }
+
+    /**
+     * Returns the task description for use by concrete task types.
+     *
+     * @return task description
+     */
+    protected String getDescription() {
+        return description;
     }
 
     /**

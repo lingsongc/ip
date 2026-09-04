@@ -90,7 +90,7 @@ public class Deadline extends Task {
         String storedBy = hasTime
                 ? by.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                 : by.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
-        return "D | " + getDataStatus() + " | " + Storage.escapeField(description)
+        return "D | " + getDataStatus() + " | " + Storage.escapeField(getDescription())
                 + " | " + storedBy;
     }
 

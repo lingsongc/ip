@@ -21,11 +21,46 @@ import soar.task.ToDo;
  * Loads and saves the task list using a local data file.
  */
 public class Storage {
+    private static final int TYPE_FIELD_INDEX = 0;
+    private static final int STATUS_FIELD_INDEX = 1;
+    private static final int DESCRIPTION_FIELD_INDEX = 2;
+    private static final int DATE_OR_START_FIELD_INDEX = 3;
+    private static final int END_FIELD_INDEX = 4;
+
+    private static final String INCOMPLETE_STATUS = "0";
+    private static final String COMPLETE_STATUS = "1";
+    private static final String ISO_DATE_TIME_SEPARATOR = "T";
+
     /** Default data-file location, relative to the project root. */
     private static final Path DEFAULT_DATA_FILE = Path.of("data", "soar.txt");
 
     /** Data file used by this storage instance. */
     private final Path dataFile;
+
+    /** Supported task records and their required number of fields. */
+    private enum StoredTaskType {
+        TODO("T", 3),
+        DEADLINE("D", 4),
+        EVENT("E", 5);
+
+        private final String code;
+        private final int fieldCount;
+
+        StoredTaskType(String code, int fieldCount) {
+            this.code = code;
+            this.fieldCount = fieldCount;
+        }
+
+        /** Returns the task type represented by a storage code. */
+        private static StoredTaskType fromCode(String code) throws StorageException {
+            for (StoredTaskType taskType : values()) {
+                if (taskType.code.equals(code)) {
+                    return taskType;
+                }
+            }
+            throw new StorageException("unknown task type '" + code + "'");
+        }
+    }
 
     /**
      * Creates storage that uses the application's default data file.
@@ -128,50 +163,66 @@ public class Storage {
         }
 
         List<String> fields = splitFields(line);
-        if (fields.size() < 2 || (!fields.get(1).equals("0") && !fields.get(1).equals("1"))) {
+        validateCompletionStatus(fields);
+        StoredTaskType taskType = StoredTaskType.fromCode(fields.get(TYPE_FIELD_INDEX));
+        validateTaskFields(fields, taskType);
+
+        Task task = createTask(fields, taskType);
+        if (fields.get(STATUS_FIELD_INDEX).equals(COMPLETE_STATUS)) {
+            task.markAsDone();
+        }
+        return task;
+    }
+
+    /** Rejects a missing or unsupported completion-status field. */
+    private void validateCompletionStatus(List<String> fields) throws StorageException {
+        if (fields.size() <= STATUS_FIELD_INDEX) {
             throw new StorageException("completion status must be 0 or 1");
         }
 
-        String type = fields.get(0);
-        int expectedFields;
-        if (type.equals("T")) {
-            expectedFields = 3;
-        } else if (type.equals("D")) {
-            expectedFields = 4;
-        } else if (type.equals("E")) {
-            expectedFields = 5;
-        } else {
-            throw new StorageException("unknown task type '" + type + "'");
+        String status = fields.get(STATUS_FIELD_INDEX);
+        if (!status.equals(INCOMPLETE_STATUS) && !status.equals(COMPLETE_STATUS)) {
+            throw new StorageException("completion status must be 0 or 1");
         }
-        if (fields.size() != expectedFields) {
-            throw new StorageException("task type " + type + " requires " + expectedFields
-                    + " fields but found " + fields.size());
+    }
+
+    /** Rejects a record with the wrong field count or blank task text. */
+    private void validateTaskFields(List<String> fields, StoredTaskType taskType)
+            throws StorageException {
+        if (fields.size() != taskType.fieldCount) {
+            throw new StorageException("task type " + taskType.code + " requires "
+                    + taskType.fieldCount + " fields but found " + fields.size());
         }
         boolean hasBlankTextField = fields.subList(2, fields.size()).stream()
                 .anyMatch(String::isBlank);
         if (hasBlankTextField) {
             throw new StorageException("task text fields must not be empty");
         }
+    }
 
-        Task task;
+    /** Builds a concrete task from validated storage fields. */
+    private Task createTask(List<String> fields, StoredTaskType taskType) throws StorageException {
         try {
-            if (type.equals("T")) {
-                task = new ToDo(fields.get(2));
-            } else if (type.equals("D") && fields.get(3).contains("T")) {
-                task = new Deadline(fields.get(2), LocalDateTime.parse(fields.get(3)));
-            } else if (type.equals("D")) {
-                task = new Deadline(fields.get(2), LocalDate.parse(fields.get(3)));
-            } else {
-                task = new Event(fields.get(2), fields.get(3), fields.get(4));
-            }
+            return switch (taskType) {
+                case TODO -> new ToDo(fields.get(DESCRIPTION_FIELD_INDEX));
+                case DEADLINE -> createDeadline(fields);
+                case EVENT -> new Event(fields.get(DESCRIPTION_FIELD_INDEX),
+                        fields.get(DATE_OR_START_FIELD_INDEX), fields.get(END_FIELD_INDEX));
+                default -> throw new IllegalArgumentException("Unsupported task type: " + taskType);
+            };
         } catch (DateTimeParseException e) {
             throw new StorageException("deadline date must use yyyy-MM-dd or ISO date-time format");
         }
+    }
 
-        if (fields.get(1).equals("1")) {
-            task.markAsDone();
+    /** Builds a deadline while preserving whether its stored value contains a time. */
+    private Deadline createDeadline(List<String> fields) {
+        String description = fields.get(DESCRIPTION_FIELD_INDEX);
+        String storedDeadline = fields.get(DATE_OR_START_FIELD_INDEX);
+        if (storedDeadline.contains(ISO_DATE_TIME_SEPARATOR)) {
+            return new Deadline(description, LocalDateTime.parse(storedDeadline));
         }
-        return task;
+        return new Deadline(description, LocalDate.parse(storedDeadline));
     }
 
     /**
