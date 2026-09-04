@@ -147,10 +147,10 @@ public class Storage {
             throw new StorageException("task type " + type + " requires " + expectedFields
                     + " fields but found " + fields.size());
         }
-        for (int i = 2; i < fields.size(); i++) {
-            if (fields.get(i).isBlank()) {
-                throw new StorageException("task text fields must not be empty");
-            }
+        boolean hasBlankTextField = fields.subList(2, fields.size()).stream()
+                .anyMatch(String::isBlank);
+        if (hasBlankTextField) {
+            throw new StorageException("task text fields must not be empty");
         }
 
         Task task;

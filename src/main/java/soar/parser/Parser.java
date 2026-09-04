@@ -1,6 +1,7 @@
 package soar.parser;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import soar.command.AddCommand;
 import soar.command.Command;
@@ -58,12 +59,10 @@ public class Parser {
      * @throws UnknownCommandException if the input does not start with a supported command
      */
     private static CommandType parseCommand(String input) throws UnknownCommandException {
-        for (CommandType commandType : CommandType.values()) {
-            if (commandType.matches(input)) {
-                return commandType;
-            }
-        }
-        throw new UnknownCommandException();
+        return Arrays.stream(CommandType.values())
+                .filter(commandType -> commandType.matches(input))
+                .findFirst()
+                .orElseThrow(UnknownCommandException::new);
     }
 
     /**
