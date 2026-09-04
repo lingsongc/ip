@@ -117,12 +117,7 @@ public class Ui {
      * @param tasks Tasks to show in list order.
      */
     public void showTaskList(List<Task> tasks) {
-        ArrayList<String> lines = new ArrayList<>();
-        lines.add("Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            lines.add((i + 1) + "." + tasks.get(i));
-        }
-        showFramed(lines);
+        showNumberedTasks("Here are the tasks in your list:", tasks);
     }
 
     /**
@@ -131,12 +126,7 @@ public class Ui {
      * @param tasks Tasks that match the find result
      */
     public void showMatchingTasks(List<Task> tasks) {
-        ArrayList<String> lines = new ArrayList<>();
-        lines.add("Here are the matching tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            lines.add((i + 1) + "." + tasks.get(i));
-        }
-        showFramed(lines);
+        showNumberedTasks("Here are the matching tasks in your list:", tasks);
     }
 
     /**
@@ -192,6 +182,16 @@ public class Ui {
         ArrayList<String> lines = new ArrayList<>();
         lines.add("Here are the deadlines and events on " + displayedDate + ":");
         lines.addAll(matches);
+        showFramed(lines);
+    }
+
+    /** Shows a heading followed by tasks numbered from one. */
+    private void showNumberedTasks(String heading, List<Task> tasks) {
+        ArrayList<String> lines = new ArrayList<>();
+        lines.add(heading);
+        for (int i = 0; i < tasks.size(); i++) {
+            lines.add((i + 1) + "." + tasks.get(i));
+        }
         showFramed(lines);
     }
 
