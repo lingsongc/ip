@@ -120,7 +120,7 @@ ____________________________________________________________
 Your task list is an open sky right now. Add a task before using 'mark'!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, edit, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -390,10 +390,10 @@ Got it. I've added this task:
 Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, edit, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, edit, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -404,14 +404,14 @@ Nice! I've marked this task as done:
   [T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, edit, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, edit, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
@@ -426,7 +426,7 @@ Here are the tasks in your list:
 1.[T][ ] real task
 ____________________________________________________________
 ____________________________________________________________
-That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, or bye to keep flying high!
+That command is on an unfamiliar flight path. Try list, find, date, todo, deadline, event, mark, unmark, delete, edit, or bye to keep flying high!
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!
@@ -1485,6 +1485,187 @@ Here are the matching tasks in your list:
 ____________________________________________________________
 ____________________________________________________________
 Add a keyword after 'find' so I know which tasks to look for!
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-014 — Edit multiple task details atomically
+
+- Aim: Verify supported edits preserve type, completion, numbering, unspecified fields, persistence,
+  and dated-event matching while showing exact before-and-after output.
+
+#### Inputs
+
+```text
+todo read book
+deadline submit draft /by 2026-09-18
+event meeting /from 2pm /to 4pm
+mark 2
+mark 3
+edit 1 /description read two chapters
+edit 2 /description submit final report /by 20 Sep 2026 6:00 PM
+edit 3 /to 2026-09-20 17:00 /description workshop
+date 2026-09-20
+edit 3 /description workshop
+list
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] submit draft (by: Sep 18 2026)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] meeting (from: 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [D][X] submit draft (by: Sep 18 2026)
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [E][X] meeting (from: 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+I've updated this task:
+  Before: [T][ ] read book
+  After:  [T][ ] read two chapters
+____________________________________________________________
+____________________________________________________________
+I've updated this task:
+  Before: [D][X] submit draft (by: Sep 18 2026)
+  After:  [D][X] submit final report (by: Sep 20 2026, 6:00PM)
+____________________________________________________________
+____________________________________________________________
+I've updated this task:
+  Before: [E][X] meeting (from: 2pm to: 4pm)
+  After:  [E][X] workshop (from: 2pm to: 2026-09-20 17:00)
+____________________________________________________________
+____________________________________________________________
+Here are the deadlines and events on Sep 20 2026:
+2.[D][X] submit final report (by: Sep 20 2026, 6:00PM)
+3.[E][X] workshop (from: 2pm to: 2026-09-20 17:00)
+____________________________________________________________
+____________________________________________________________
+That task already has those details:
+  [E][X] workshop (from: 2pm to: 2026-09-20 17:00)
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] read two chapters
+2.[D][X] submit final report (by: Sep 20 2026, 6:00PM)
+3.[E][X] workshop (from: 2pm to: 2026-09-20 17:00)
+____________________________________________________________
+____________________________________________________________
+Bye! Always soar towards your goals!
+____________________________________________________________
+```
+
+### TC-015 — Invalid edits preserve every task
+
+- Aim: Verify edit syntax, task numbers, field applicability, duplicate markers, empty values, and
+  deadline validation fail without applying any partial change.
+
+#### Inputs
+
+```text
+todo anchor
+deadline report /by 2026-09-20
+event meeting /from 2pm /to 4pm
+edit
+edit two /description revised
+edit 4 /description revised
+edit 1
+edit 1 /when tomorrow
+edit 1 /description revised /description again
+edit 1 /to 5pm
+edit 2 /description changed /by 2026-02-29
+edit 3 /from /to 5pm
+list
+bye
+```
+
+#### Expected output
+
+```text
+____________________________________________________________
+ ____                    
+/ ___|  ___   __ _ _ __  
+\___ \ / _ \ / _` | '__| 
+ ___) | (_) | (_| | |    
+|____/ \___/ \__,_|_|    
+Hey there! I'm Soar, your upbeat little sidekick!
+What exciting thing can I help you tackle today?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] anchor
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] report (by: Sep 20 2026)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] meeting (from: 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Add a task number after 'edit' so I know which task should be updated!
+____________________________________________________________
+____________________________________________________________
+'two' is not a whole task number. Choose a number from your list to keep flying high!
+____________________________________________________________
+____________________________________________________________
+Task 4 is outside your list. Choose a number from 1 to 3 and we'll stay on course!
+____________________________________________________________
+____________________________________________________________
+Add at least one editable field after the task number.
+____________________________________________________________
+____________________________________________________________
+I don't recognize the edit field '/when'. Use /description, /by, /from, or /to.
+____________________________________________________________
+____________________________________________________________
+The edit field '/description' appears more than once. Provide each field only once.
+____________________________________________________________
+____________________________________________________________
+A todo can only edit /description.
+____________________________________________________________
+____________________________________________________________
+I couldn't understand the deadline '2026-02-29'. Use yyyy-MM-dd, d/M/yyyy, d/M/yyyy HHmm, yyyy-MM-dd HH:mm, d MMM yyyy h:mm a, or an ISO date-time!
+____________________________________________________________
+____________________________________________________________
+The '/from' value is empty. Add a value after it.
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] anchor
+2.[D][ ] report (by: Sep 20 2026)
+3.[E][ ] meeting (from: 2pm to: 4pm)
 ____________________________________________________________
 ____________________________________________________________
 Bye! Always soar towards your goals!

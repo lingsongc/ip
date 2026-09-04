@@ -1,9 +1,12 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import soar.command.AddCommand;
 import soar.command.Command;
 import soar.command.DeleteCommand;
+import soar.command.EditCommand;
+import soar.command.EditField;
 import soar.command.MarkCommand;
 import soar.command.UnmarkCommand;
 import soar.exception.InvalidTaskNumberException;
@@ -35,6 +38,7 @@ public class CommandTest {
             verifyMarkRollback(storage);
             verifyUnmarkRollback(storage);
             verifyDeleteRollback(storage);
+            verifyEditRollback(storage);
             verifyTaskNumberValidation(storage);
         } finally {
             Files.deleteIfExists(storageTarget);
@@ -79,6 +83,17 @@ public class CommandTest {
         require(tasks.size() == 2, "A failed deletion changed the task count");
         require(tasks.get(0) == firstTask && tasks.get(1) == secondTask,
                 "A failed deletion did not restore the original order");
+    }
+
+    /** Verifies that a failed edit restores the original task object. */
+    private static void verifyEditRollback(Storage storage) throws Exception {
+        Task original = new ToDo("before edit");
+        TaskList tasks = new TaskList();
+        tasks.add(original);
+
+        expectSaveFailure(new EditCommand(1,
+                Map.of(EditField.DESCRIPTION, "after edit")), tasks, storage);
+        require(tasks.get(0) == original, "A failed edit did not restore the original task");
     }
 
     /** Verifies that numbered commands reject tasks that do not currently exist. */

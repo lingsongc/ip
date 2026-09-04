@@ -6,7 +6,8 @@ package soar.parser;
 public enum TaskAction {
     COMPLETE_FLIGHT("has completed its flight"),
     RETURN_TO_FLIGHT_PATH("should return to the flight path"),
-    SHOT_DOWN("should be shot down");
+    SHOT_DOWN("should be shot down"),
+    UPDATED("should be updated");
 
     /** Phrase inserted into the missing-task-number error message. */
     private final String description;

@@ -13,6 +13,7 @@ import soar.command.AddCommand;
 import soar.command.Command;
 import soar.command.DateCommand;
 import soar.command.DeleteCommand;
+import soar.command.EditCommand;
 import soar.command.ExitCommand;
 import soar.command.FindCommand;
 import soar.command.ListCommand;
@@ -41,7 +42,8 @@ public class ParserTest {
                 Map.entry("event meeting /from 2pm /to 3pm", AddCommand.class),
                 Map.entry("mark 1", MarkCommand.class),
                 Map.entry("unmark 1", UnmarkCommand.class),
-                Map.entry("delete 1", DeleteCommand.class));
+                Map.entry("delete 1", DeleteCommand.class),
+                Map.entry("edit 1 /description revised /to 5pm", EditCommand.class));
 
         assertAll(commands.entrySet().stream()
                 .map(entry -> () -> assertInstanceOf(
@@ -84,6 +86,21 @@ public class ParserTest {
         assertMessageContains(InvalidTaskNumberException.class, "delete two", "whole");
         assertMessageContains(InvalidTaskNumberException.class,
                 "mark 999999999999999999999", "whole");
+    }
+
+    /** Verifies edit commands reject missing, unknown, duplicate, and empty fields. */
+    @Test
+    public void parse_invalidEditFields_throwsSpecificException() {
+        assertMessageContains(InvalidTaskNumberException.class, "edit", "after 'edit'");
+        assertMessageContains(InvalidTaskFormatException.class, "edit 1", "at least one");
+        assertMessageContains(InvalidTaskFormatException.class,
+                "edit 1 description revised", "at least one");
+        assertMessageContains(InvalidTaskFormatException.class,
+                "edit 1 /when tomorrow", "don't recognize");
+        assertMessageContains(InvalidTaskFormatException.class,
+                "edit 1 /to 4pm /to 5pm", "more than once");
+        assertMessageContains(InvalidTaskFormatException.class,
+                "edit 1 /description /to 5pm", "'/description' value is empty");
     }
 
     /** Verifies date queries reject missing and impossible dates with useful guidance. */

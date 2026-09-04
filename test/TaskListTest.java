@@ -25,6 +25,7 @@ public class TaskListTest {
         require(tasks.size() == 3, "Initial tasks were not copied");
         verifySnapshotCannotChangeStructure(tasks);
         verifyAddDeleteAndRestore(tasks);
+        verifyReplace(tasks);
         verifyCompletionAndRestore(tasks);
         require(tasks.findIndicesOn(LocalDate.of(2019, 10, 15)).equals(List.of(1, 2)),
                 "Date matching did not preserve original task indices");
@@ -57,6 +58,17 @@ public class TaskListTest {
                 "A deleted task was not restored at its original position");
 
         tasks.delete(3);
+    }
+
+    /** Verifies replacement retains list size and returns the previous task. */
+    private static void verifyReplace(TaskList tasks) {
+        Task original = tasks.get(0);
+        ToDo replacement = new ToDo("replacement");
+
+        require(tasks.replace(0, replacement) == original, "Replacement did not return the original task");
+        require(tasks.size() == 3 && tasks.get(0) == replacement,
+                "Replacement changed the list size or wrong position");
+        tasks.replace(0, original);
     }
 
     /** Verifies mark, unmark, and restoration of an earlier completion state. */

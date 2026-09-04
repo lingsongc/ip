@@ -2,11 +2,19 @@ package soar.parser;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import soar.command.AddCommand;
 import soar.command.Command;
 import soar.command.DateCommand;
 import soar.command.DeleteCommand;
+import soar.command.EditCommand;
+import soar.command.EditField;
 import soar.command.ExitCommand;
 import soar.command.FindCommand;
 import soar.command.ListCommand;
@@ -26,6 +34,10 @@ import soar.task.ToDo;
  * Interprets user input and converts command arguments into application values.
  */
 public class Parser {
+    /** Recognizes slash-word tokens that delimit edit fields. */
+    private static final Pattern EDIT_FIELD_PATTERN =
+            Pattern.compile("(?<!\\S)/[A-Za-z]+(?=\\s|$)");
+
     /** Prevents creation of a stateless parser utility. */
     private Parser() {
     }
@@ -48,6 +60,7 @@ public class Parser {
             case MARK -> new MarkCommand(parseTaskNumber(input, commandType));
             case UNMARK -> new UnmarkCommand(parseTaskNumber(input, commandType));
             case DELETE -> new DeleteCommand(parseTaskNumber(input, commandType));
+            case EDIT -> parseEdit(input);
         };
     }
 
@@ -99,8 +112,14 @@ public class Parser {
             throws InvalidTaskNumberException {
         assert commandType.getMissingTaskNumberAction() != null
                 : "Only numbered commands should be parsed for a task number";
-        String commandWord = commandType.getCommandWord();
         String taskNumberText = argumentsAfter(input, commandType);
+        return parseTaskNumberText(taskNumberText, commandType);
+    }
+
+    /** Parses a task-number token using the selected command's error wording. */
+    private static int parseTaskNumberText(String taskNumberText, CommandType commandType)
+            throws InvalidTaskNumberException {
+        String commandWord = commandType.getCommandWord();
         if (taskNumberText.isEmpty()) {
             throw new InvalidTaskNumberException("Add a task number after '" + commandWord
                     + "' so I know which task "
@@ -116,6 +135,58 @@ public class Parser {
         }
 
         return taskNumber;
+    }
+
+    /** Builds an edit command from a task number and ordered field-value pairs. */
+    private static EditCommand parseEdit(String input) throws SoarException {
+        String details = argumentsAfter(input, CommandType.EDIT);
+        if (details.isEmpty()) {
+            parseTaskNumberText("", CommandType.EDIT);
+        }
+
+        int firstSpace = details.indexOf(' ');
+        String taskNumberText = firstSpace < 0 ? details : details.substring(0, firstSpace);
+        int taskNumber = parseTaskNumberText(taskNumberText, CommandType.EDIT);
+        if (firstSpace < 0 || details.substring(firstSpace).isBlank()) {
+            throw new InvalidTaskFormatException(
+                    "Add at least one editable field after the task number.");
+        }
+
+        String fieldText = details.substring(firstSpace).trim();
+        return new EditCommand(taskNumber, parseEditFields(fieldText));
+    }
+
+    /** Parses field markers and their values while retaining command order. */
+    private static Map<EditField, String> parseEditFields(String fieldText)
+            throws InvalidTaskFormatException {
+        Matcher matcher = EDIT_FIELD_PATTERN.matcher(fieldText);
+        List<MatchResult> matches = matcher.results().toList();
+        if (matches.isEmpty() || matches.get(0).start() != 0) {
+            throw new InvalidTaskFormatException(
+                    "Add at least one editable field after the task number.");
+        }
+
+        LinkedHashMap<EditField, String> edits = new LinkedHashMap<>();
+        for (int i = 0; i < matches.size(); i++) {
+            MatchResult match = matches.get(i);
+            String marker = match.group();
+            EditField field = EditField.fromMarker(marker).orElseThrow(() ->
+                    new InvalidTaskFormatException("I don't recognize the edit field '" + marker
+                            + "'. Use /description, /by, /from, or /to."));
+            if (edits.containsKey(field)) {
+                throw new InvalidTaskFormatException("The edit field '" + marker
+                        + "' appears more than once. Provide each field only once.");
+            }
+
+            int valueEnd = i + 1 < matches.size() ? matches.get(i + 1).start() : fieldText.length();
+            String value = fieldText.substring(match.end(), valueEnd).trim();
+            if (value.isEmpty()) {
+                throw new InvalidTaskFormatException("The '" + marker
+                        + "' value is empty. Add a value after it.");
+            }
+            edits.put(field, value);
+        }
+        return edits;
     }
 
     /**

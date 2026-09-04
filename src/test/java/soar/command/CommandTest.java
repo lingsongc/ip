@@ -9,16 +9,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import soar.exception.InvalidTaskFormatException;
 import soar.exception.InvalidTaskNumberException;
 import soar.exception.StorageException;
 import soar.storage.Storage;
+import soar.task.Deadline;
+import soar.task.Event;
 import soar.task.Task;
 import soar.task.TaskList;
 import soar.task.ToDo;
@@ -87,6 +93,49 @@ public class CommandTest {
         assertFalse(storage.load().get(0).isDone());
     }
 
+    /** Verifies a multi-field edit preserves state and persists every requested value. */
+    @Test
+    public void execute_editMultipleEventFields_preservesStateAndPersistsValues() throws Exception {
+        Storage storage = new Storage(testDirectory.resolve("tasks.txt"));
+        Event original = new Event("meeting", "2pm", "4pm");
+        original.markAsDone();
+        TaskList tasks = new TaskList(List.of(original));
+        LinkedHashMap<EditField, String> edits = new LinkedHashMap<>();
+        edits.put(EditField.TO, "2026-09-20 17:00");
+        edits.put(EditField.DESCRIPTION, "team workshop");
+
+        new EditCommand(1, edits).execute(tasks, silentUi, storage);
+
+        assertEquals(1, tasks.size());
+        assertTrue(tasks.get(0).isDone());
+        assertEquals("[E][X] team workshop (from: 2pm to: 2026-09-20 17:00)",
+                tasks.get(0).toString());
+        assertEquals(tasks.get(0).toDataString(), storage.load().get(0).toDataString());
+    }
+
+    /** Verifies unsupported fields and invalid dates leave the original task untouched. */
+    @Test
+    public void execute_invalidEditValues_throwsWithoutChangingTask() {
+        Storage storage = new Storage(testDirectory.resolve("tasks.txt"));
+        ToDo todo = new ToDo("unchanged");
+        TaskList todoTasks = new TaskList(List.of(todo));
+
+        assertThrows(InvalidTaskFormatException.class, () ->
+                new EditCommand(1, Map.of(EditField.TO, "5pm"))
+                        .execute(todoTasks, silentUi, storage));
+        assertSame(todo, todoTasks.get(0));
+
+        Deadline deadline = new Deadline("original", LocalDate.of(2026, 9, 20));
+        TaskList deadlineTasks = new TaskList(List.of(deadline));
+        LinkedHashMap<EditField, String> edits = new LinkedHashMap<>();
+        edits.put(EditField.DESCRIPTION, "changed");
+        edits.put(EditField.BY, "2026-02-29");
+
+        assertThrows(InvalidTaskFormatException.class, () ->
+                new EditCommand(1, edits).execute(deadlineTasks, silentUi, storage));
+        assertSame(deadline, deadlineTasks.get(0));
+    }
+
     /** Verifies all mutating commands roll back their in-memory change after save failure. */
     @Test
     public void execute_saveFails_rollsBackEveryMutation() throws Exception {
@@ -102,16 +151,21 @@ public class CommandTest {
         ToDo first = new ToDo("first");
         ToDo second = new ToDo("second");
         TaskList deleteTasks = new TaskList(List.of(first, second));
+        ToDo edited = new ToDo("before edit");
+        TaskList editTasks = new TaskList(List.of(edited));
 
         assertSaveFailure(new AddCommand(new ToDo("added")), addTasks, failingStorage);
         assertSaveFailure(new MarkCommand(1), markTasks, failingStorage);
         assertSaveFailure(new UnmarkCommand(1), unmarkTasks, failingStorage);
         assertSaveFailure(new DeleteCommand(1), deleteTasks, failingStorage);
+        assertSaveFailure(new EditCommand(1,
+                Map.of(EditField.DESCRIPTION, "after edit")), editTasks, failingStorage);
 
         assertTrue(addTasks.asList().isEmpty());
         assertFalse(markTasks.get(0).isDone());
         assertTrue(unmarkTasks.get(0).isDone());
         assertEquals(List.of(first, second), deleteTasks.asList());
+        assertSame(edited, editTasks.get(0));
     }
 
     /** Verifies numbered commands reject empty-list and out-of-range selections without mutation. */
@@ -153,6 +207,16 @@ public class CommandTest {
 
         @Override
         public void showTaskDeleted(Task task, int taskCount) {
+            // The console UI is covered by the UI test plan.
+        }
+
+        @Override
+        public void showTaskEdited(Task originalTask, Task updatedTask) {
+            // The console UI is covered by the UI test plan.
+        }
+
+        @Override
+        public void showTaskUnchanged(Task task) {
             // The console UI is covered by the UI test plan.
         }
     }
