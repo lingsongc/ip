@@ -37,7 +37,12 @@ public class UnmarkCommand extends Command {
         Task task = tasks.get(taskIndex);
         boolean wasDone = task.isDone();
         tasks.unmark(taskIndex);
-        saveChange(storage, tasks, () -> tasks.restoreCompletion(taskIndex, wasDone));
+        assert !task.isDone() : "An unmarked task should be incomplete";
+        saveChange(storage, tasks, () -> {
+            tasks.restoreCompletion(taskIndex, wasDone);
+            assert task.isDone() == wasDone
+                    : "Unmark rollback should restore the original completion state";
+        });
         ui.showTaskMarked(task, false);
     }
 }
