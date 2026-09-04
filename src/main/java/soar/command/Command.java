@@ -58,7 +58,10 @@ public abstract class Command {
                     + " is outside your list. Choose a number from 1 to " + taskCount
                     + " and we'll stay on course!");
         }
-        return taskNumber - 1;
+        int taskIndex = taskNumber - 1;
+        assert taskIndex >= 0 && taskIndex < taskCount
+                : "A validated task number should map to an existing task index";
+        return taskIndex;
     }
 
     /**

@@ -34,9 +34,17 @@ public class DeleteCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SoarException {
         int taskIndex = requireTaskIndex(taskNumber, tasks, CommandType.DELETE);
+        int originalTaskCount = tasks.size();
         Task removedTask = tasks.delete(taskIndex);
-        saveChange(storage, tasks, () ->
-                tasks.restoreDeletedTask(taskIndex, removedTask));
+        assert tasks.size() == originalTaskCount - 1
+                : "Deleting a task should decrease the task count by one";
+        saveChange(storage, tasks, () -> {
+            tasks.restoreDeletedTask(taskIndex, removedTask);
+            assert tasks.size() == originalTaskCount
+                    : "Deletion rollback should restore the original task count";
+            assert tasks.get(taskIndex) == removedTask
+                    : "Deletion rollback should restore the task at its original index";
+        });
         ui.showTaskDeleted(removedTask, tasks.size());
     }
 }
