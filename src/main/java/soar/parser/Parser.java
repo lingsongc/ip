@@ -75,6 +75,10 @@ public class Parser {
      * @throws SoarException if a required task detail is missing or invalid
      */
     private static Task parseTask(String input, CommandType commandType) throws SoarException {
+        assert commandType == CommandType.TODO
+                || commandType == CommandType.DEADLINE
+                || commandType == CommandType.EVENT
+                : "Only task-creation commands should be parsed as tasks";
         return switch (commandType) {
             case TODO -> parseToDo(input);
             case DEADLINE -> parseDeadline(input);
@@ -94,6 +98,8 @@ public class Parser {
      */
     private static int parseTaskNumber(String input, CommandType commandType)
             throws InvalidTaskNumberException {
+        assert commandType.getMissingTaskNumberAction() != null
+                : "Only numbered commands should be parsed for a task number";
         String commandWord = commandType.getCommandWord();
         String taskNumberText = argumentsAfter(input, commandType);
         if (taskNumberText.isEmpty()) {
@@ -210,6 +216,7 @@ public class Parser {
 
     /** Returns the trimmed argument text following a recognized command word. */
     private static String argumentsAfter(String input, CommandType commandType) {
+        assert commandType.matches(input) : "Input should match its recognized command type";
         return input.substring(commandType.getCommandWord().length()).trim();
     }
 

@@ -37,7 +37,12 @@ public class MarkCommand extends Command {
         Task task = tasks.get(taskIndex);
         boolean wasDone = task.isDone();
         tasks.mark(taskIndex);
-        saveChange(storage, tasks, () -> tasks.restoreCompletion(taskIndex, wasDone));
+        assert task.isDone() : "A marked task should be completed";
+        saveChange(storage, tasks, () -> {
+            tasks.restoreCompletion(taskIndex, wasDone);
+            assert task.isDone() == wasDone
+                    : "Mark rollback should restore the original completion state";
+        });
         ui.showTaskMarked(task, true);
     }
 }

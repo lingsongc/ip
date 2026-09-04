@@ -34,8 +34,18 @@ public class AddCommand extends Command {
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws StorageException {
+        int originalTaskCount = tasks.size();
         tasks.add(task);
-        saveChange(storage, tasks, () -> tasks.delete(tasks.size() - 1));
+        assert tasks.size() == originalTaskCount + 1
+                : "Adding a task should increase the task count by one";
+        assert tasks.get(originalTaskCount) == task
+                : "A newly added task should be appended to the list";
+        saveChange(storage, tasks, () -> {
+            Task rolledBackTask = tasks.delete(tasks.size() - 1);
+            assert rolledBackTask == task : "Addition rollback should remove the newly added task";
+            assert tasks.size() == originalTaskCount
+                    : "Addition rollback should restore the original task count";
+        });
         ui.showTaskAdded(task, tasks.size());
     }
 }
