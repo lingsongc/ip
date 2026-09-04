@@ -2,7 +2,7 @@
 
 ## Configuration
 
-- Build command: `javac -d _temp/ui-test-classes src/main/java/soar/Soar.java src/main/java/soar/command/*.java src/main/java/soar/exception/*.java src/main/java/soar/parser/*.java src/main/java/soar/storage/*.java src/main/java/soar/task/*.java src/main/java/soar/ui/*.java test/StorageTest.java test/TaskListTest.java test/CommandTest.java && java -cp _temp/ui-test-classes StorageTest && java -cp _temp/ui-test-classes TaskListTest && java -cp _temp/ui-test-classes CommandTest`
+- Build command: `javac -d _temp/ui-test-classes src/main/java/soar/Soar.java src/main/java/soar/command/*.java src/main/java/soar/exception/*.java src/main/java/soar/parser/*.java src/main/java/soar/storage/*.java src/main/java/soar/task/*.java src/main/java/soar/ui/*.java test/StorageTest.java test/TaskListTest.java test/CommandTest.java && java -ea -cp _temp/ui-test-classes StorageTest && java -ea -cp _temp/ui-test-classes TaskListTest && java -ea -cp _temp/ui-test-classes CommandTest`
 - Run command: `powershell -NoProfile -ExecutionPolicy Bypass -File test/run-ui-test.ps1`
 - Working directory: `.`
 - Timeout seconds: `60`
