@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import soar.task.Task;
 
@@ -187,11 +189,11 @@ public class Ui {
 
     /** Shows a heading followed by tasks numbered from one. */
     private void showNumberedTasks(String heading, List<Task> tasks) {
-        ArrayList<String> lines = new ArrayList<>();
-        lines.add(heading);
-        for (int i = 0; i < tasks.size(); i++) {
-            lines.add((i + 1) + "." + tasks.get(i));
-        }
+        List<String> lines = Stream.concat(
+                Stream.of(heading),
+                IntStream.range(0, tasks.size())
+                        .mapToObj(index -> (index + 1) + "." + tasks.get(index)))
+                .toList();
         showFramed(lines);
     }
 

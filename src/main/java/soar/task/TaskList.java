@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 /**
  * Owns the ordered collection of tasks and its list-level operations.
@@ -134,17 +135,17 @@ public class TaskList {
      * @return matching indices in task-list order
      */
     public List<Integer> findIndicesOn(LocalDate date) {
-        ArrayList<Integer> matches = new ArrayList<>();
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            boolean matchesDate = task instanceof Deadline deadline
-                    && deadline.getBy().toLocalDate().equals(date);
-            matchesDate = matchesDate || task instanceof Event event && event.occursOn(date);
-            if (matchesDate) {
-                matches.add(i);
-            }
-        }
-        return List.copyOf(matches);
+        return IntStream.range(0, tasks.size())
+                .filter(index -> isOnDate(tasks.get(index), date))
+                .boxed()
+                .toList();
+    }
+
+    /** Returns whether a deadline or event occurs on the specified date. */
+    private boolean isOnDate(Task task, LocalDate date) {
+        boolean matchesDate = task instanceof Deadline deadline
+                && deadline.getBy().toLocalDate().equals(date);
+        return matchesDate || task instanceof Event event && event.occursOn(date);
     }
 
     /**
