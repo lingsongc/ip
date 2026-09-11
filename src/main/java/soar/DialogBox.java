@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
  */
 public class DialogBox extends HBox {
     private static final String REPLY_LABEL_STYLE_CLASS = "reply-label";
+    private static final double USER_MESSAGE_MAX_WIDTH_RATIO = 0.7;
 
     @FXML
     private Label dialog;
@@ -48,7 +49,10 @@ public class DialogBox extends HBox {
      * @return right-aligned user dialog box
      */
     public static DialogBox getUserDialog(String message, Image image) {
-        return new DialogBox(message, image);
+        DialogBox dialogBox = new DialogBox(message, image);
+        dialogBox.dialog.maxWidthProperty().bind(
+                dialogBox.widthProperty().multiply(USER_MESSAGE_MAX_WIDTH_RATIO));
+        return dialogBox;
     }
 
     /**
