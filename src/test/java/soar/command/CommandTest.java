@@ -136,6 +136,19 @@ public class CommandTest {
         assertSame(deadline, deadlineTasks.get(0));
     }
 
+    /** Verifies an edit cannot reverse a dated event while leaving it partially changed. */
+    @Test
+    public void execute_eventEditWithReversedTimes_throwsWithoutChangingTask() {
+        Storage storage = new Storage(testDirectory.resolve("tasks.txt"));
+        Event event = new Event("workshop", "2026-09-20 14:00", "2026-09-20 16:00");
+        TaskList tasks = new TaskList(List.of(event));
+
+        assertThrows(InvalidTaskFormatException.class, () ->
+                new EditCommand(1, Map.of(EditField.TO, "2026-09-20 13:00"))
+                        .execute(tasks, silentUi, storage));
+        assertSame(event, tasks.get(0));
+    }
+
     /** Verifies all mutating commands roll back their in-memory change after save failure. */
     @Test
     public void execute_saveFails_rollsBackEveryMutation() throws Exception {

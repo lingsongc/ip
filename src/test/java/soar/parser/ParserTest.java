@@ -61,6 +61,13 @@ public class ParserTest {
         assertThrows(UnknownCommandException.class, () -> Parser.parse("list extra"));
         assertThrows(UnknownCommandException.class, () -> Parser.parse("todoist task"));
         assertThrows(UnknownCommandException.class, () -> Parser.parse("mark1"));
+        assertThrows(UnknownCommandException.class, () -> Parser.parse(null));
+    }
+
+    /** Verifies that harmless whitespace does not prevent a valid command from running. */
+    @Test
+    public void parse_commandWithSurroundingWhitespace_returnsMatchingCommand() throws SoarException {
+        assertInstanceOf(ListCommand.class, Parser.parse("  list  "));
     }
 
     /** Verifies task descriptions and scheduling fields before an add command is created. */
@@ -76,6 +83,8 @@ public class ParserTest {
         assertMessageContains(EmptyDescriptionException.class, "event /from 2pm /to 3pm", "event");
         assertMessageContains(InvalidTaskFormatException.class,
                 "event meeting /from /to 3pm", "incomplete");
+        assertMessageContains(InvalidTaskFormatException.class,
+                "event backwards /from 2026-09-20 17:00 /to 2026-09-20 16:00", "ends before");
     }
 
     /** Verifies missing, fractional, and overflowing task numbers are rejected during parsing. */

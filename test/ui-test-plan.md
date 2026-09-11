@@ -209,6 +209,7 @@ event missing end /from noon /to
 list
 event team sync /from noon /to 1pm
 event /from 2pm /to 3pm
+event backwards /from 2026-09-20 17:00 /to 2026-09-20 16:00
 list
 bye
 ```
@@ -260,6 +261,9 @@ Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 The event description is empty. Give it a few words, and it will be ready to soar!
+____________________________________________________________
+____________________________________________________________
+The event ends before it starts. Make its '/to' date or time the same as or after '/from'.
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:

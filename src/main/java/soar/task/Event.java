@@ -1,6 +1,7 @@
 package soar.task;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import soar.parser.DateTimeParser;
@@ -45,6 +46,29 @@ public class Event extends Task {
      */
     public String getTo() {
         return to;
+    }
+
+    /**
+     * Returns whether dated event boundaries are in chronological order.
+     *
+     * <p>Free-form times remain valid because Soar cannot reliably compare them.
+     * When both values include supported date-times, their times are compared;
+     * otherwise, supported calendar dates are compared.</p>
+     *
+     * @param from Event start value.
+     * @param to Event end value.
+     * @return {@code true} if the known boundaries are in chronological order
+     */
+    public static boolean hasValidDateOrder(String from, String to) {
+        Optional<LocalDateTime> startDateTime = DateTimeParser.parseDateTime(from);
+        Optional<LocalDateTime> endDateTime = DateTimeParser.parseDateTime(to);
+        if (startDateTime.isPresent() && endDateTime.isPresent()) {
+            return !endDateTime.get().isBefore(startDateTime.get());
+        }
+
+        Optional<LocalDate> startDate = DateTimeParser.parseCalendarDate(from);
+        Optional<LocalDate> endDate = DateTimeParser.parseCalendarDate(to);
+        return startDate.isEmpty() || endDate.isEmpty() || !endDate.get().isBefore(startDate.get());
     }
 
     /**

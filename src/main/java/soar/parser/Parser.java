@@ -50,17 +50,18 @@ public class Parser {
      * @throws SoarException if the command or one of its arguments is invalid
      */
     public static Command parse(String input) throws SoarException {
-        CommandType commandType = parseCommand(input);
+        String normalizedInput = input == null ? "" : input.trim();
+        CommandType commandType = parseCommand(normalizedInput);
         return switch (commandType) {
             case BYE -> new ExitCommand();
             case LIST -> new ListCommand();
-            case FIND -> new FindCommand(parseKeyword(input));
-            case DATE -> new DateCommand(parseDate(input));
-            case TODO, DEADLINE, EVENT -> new AddCommand(parseTask(input, commandType));
-            case MARK -> new MarkCommand(parseTaskNumber(input, commandType));
-            case UNMARK -> new UnmarkCommand(parseTaskNumber(input, commandType));
-            case DELETE -> new DeleteCommand(parseTaskNumber(input, commandType));
-            case EDIT -> parseEdit(input);
+            case FIND -> new FindCommand(parseKeyword(normalizedInput));
+            case DATE -> new DateCommand(parseDate(normalizedInput));
+            case TODO, DEADLINE, EVENT -> new AddCommand(parseTask(normalizedInput, commandType));
+            case MARK -> new MarkCommand(parseTaskNumber(normalizedInput, commandType));
+            case UNMARK -> new UnmarkCommand(parseTaskNumber(normalizedInput, commandType));
+            case DELETE -> new DeleteCommand(parseTaskNumber(normalizedInput, commandType));
+            case EDIT -> parseEdit(normalizedInput);
         };
     }
 
@@ -280,6 +281,10 @@ public class Parser {
         if (from.isEmpty() || to.isEmpty()) {
             throw new InvalidTaskFormatException(
                     "The event's flight times are incomplete. Fill in both '/from' and '/to' values!");
+        }
+        if (!Event.hasValidDateOrder(from, to)) {
+            throw new InvalidTaskFormatException(
+                    "The event ends before it starts. Make its '/to' date or time the same as or after '/from'.");
         }
         return new Event(description, from, to);
     }
