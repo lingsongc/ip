@@ -88,10 +88,7 @@ public class EditCommand extends Command {
         if (task instanceof Event event) {
             requireSupportedFields(Set.of(EditField.DESCRIPTION, EditField.FROM, EditField.TO),
                     "An event can only edit /description, /from, or /to.");
-            return new Event(
-                    editedDescription(event),
-                    edits.getOrDefault(EditField.FROM, event.getFrom()),
-                    edits.getOrDefault(EditField.TO, event.getTo()));
+            return createUpdatedEvent(event);
         }
         throw new IllegalArgumentException("Unsupported task type: " + task.getClass().getName());
     }
@@ -117,6 +114,17 @@ public class EditCommand extends Command {
         throw new InvalidTaskFormatException("I couldn't understand the deadline '" + editedBy
                 + "'. Use yyyy-MM-dd, d/M/yyyy, d/M/yyyy HHmm, yyyy-MM-dd HH:mm, "
                 + "d MMM yyyy h:mm a, or an ISO date-time!");
+    }
+
+    /** Builds an event after ensuring any known dates remain in chronological order. */
+    private Event createUpdatedEvent(Event event) throws InvalidTaskFormatException {
+        String from = edits.getOrDefault(EditField.FROM, event.getFrom());
+        String to = edits.getOrDefault(EditField.TO, event.getTo());
+        if (!Event.hasValidDateOrder(from, to)) {
+            throw new InvalidTaskFormatException(
+                    "The event ends before it starts. Make its '/to' date or time the same as or after '/from'.");
+        }
+        return new Event(editedDescription(event), from, to);
     }
 
     /** Returns the edited description or the selected task's existing description. */
