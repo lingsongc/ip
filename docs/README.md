@@ -1,21 +1,97 @@
 # Soar User Guide
 
-Soar is a task-tracking chatbot. Enter commands in the chat box to add, list, find, complete, delete,
-or edit tasks.
+**Soar is a task-tracking chatbot** that helps you keep track of todos, deadlines, and events. Type a command in the chat box and press Enter. Your tasks are saved automatically.
 
-## Editing tasks
+## Getting started
 
-Use `edit` to change one or more details without deleting and recreating a task:
+Start Soar, then try these commands:
 
 ```text
-edit TASK_NUMBER FIELD VALUE [FIELD VALUE ...]
+todo read chapter 3
+deadline submit report /by 20 Sep 2026 6:00 PM
+event project meeting /from 2026-09-20 14:00 /to 2026-09-20 16:00
+list
 ```
 
-The task number is the number shown by `list`. Fields may appear in any order, but each field may
-appear only once in a command.
+In command formats below, `UPPER_CASE` text is a value you supply. Task numbers are the positive numbers shown by `list`.
 
-| Task type | Editable fields |
-|---|---|
+## Features
+
+### Add a todo: `todo`
+
+Adds a task with no date or time.
+
+Format: `todo DESCRIPTION`
+
+Example: `todo buy groceries`
+
+### Add a deadline: `deadline`
+
+Adds a task due on a date, optionally at a time.
+
+Format: `deadline DESCRIPTION /by DATE_OR_TIME`
+
+Example: `deadline submit report /by 20 Sep 2026 6:00 PM`
+
+Supported deadline and date-query formats are:
+
+```text
+yyyy-MM-dd                 e.g. 2026-09-20
+d/M/yyyy                   e.g. 20/9/2026
+d/M/yyyy HHmm              e.g. 20/9/2026 1800
+yyyy-MM-dd HH:mm           e.g. 2026-09-20 18:00
+d MMM yyyy h:mm a          e.g. 20 Sep 2026 6:00 PM
+ISO local date-time        e.g. 2026-09-20T18:00
+```
+
+### Add an event: `event`
+
+Adds an event with a start and end time.
+
+Format: `event DESCRIPTION /from START /to END`
+
+Example: `event project meeting /from 2026-09-20 14:00 /to 2026-09-20 16:00`
+
+Event times can be any non-empty text. When both values are recognised date or date-times, the end must not be before the start, and the event can be found with `date`.
+
+### View all tasks: `list`
+
+Shows every task in its current order, with its task number and completion status.
+
+Format: `list`
+
+### Find tasks by description: `find`
+
+Shows tasks whose descriptions contain a word or phrase. Matching is case-insensitive.
+
+Format: `find KEYWORD_OR_PHRASE`
+
+Example: `find report`
+
+### View tasks on a date: `date`
+
+Shows deadlines and events that occur on a specified date. Use any date or date-time format listed under `deadline`.
+
+Format: `date DATE_OR_TIME`
+
+Example: `date 20 Sep 2026`
+
+### Mark or unmark a task: `mark`, `unmark`
+
+Marks a task as complete, or returns it to incomplete.
+
+Formats: `mark TASK_NUMBER` and `unmark TASK_NUMBER`
+
+Examples: `mark 2`, `unmark 2`
+
+### Edit a task: `edit`
+
+Changes one or more details without removing the task. Its type, completion status, list position, and fields not included in the command are kept. If any new value is invalid, nothing is changed.
+
+Format: `edit TASK_NUMBER FIELD VALUE [FIELD VALUE ...]`
+
+| Task type | Fields you can edit |
+| --- | --- |
 | Todo | `/description` |
 | Deadline | `/description`, `/by` |
 | Event | `/description`, `/from`, `/to` |
@@ -28,41 +104,37 @@ edit 2 /description submit final report /by 20 Sep 2026 6:00 PM
 edit 3 /to 5pm /from 3pm
 ```
 
-An edit preserves the task's type, completion status, list position, and every field not included in
-the command. If any supplied field is invalid, none of the fields are changed.
+Each field can appear once and fields may be in any order. Values cannot contain a standalone slash-word such as `/to` or `/by`, because Soar treats it as another field marker.
 
-Soar shows both versions after a successful edit:
+### Delete a task: `delete`
 
-```text
-I've updated this task:
-  Before: [E][ ] meeting (from: 2pm to: 4pm)
-  After:  [E][ ] meeting (from: 2pm to: 5pm)
-```
+Permanently removes the specified task.
 
-### Field-marker restriction
+Format: `delete TASK_NUMBER`
 
-Every standalone slash-word token is treated as the start of another field. Consequently, values
-cannot contain standalone tokens such as `/to`, `/by`, or `/notes` as literal text. Unknown field
-markers are rejected.
+Example: `delete 3`
 
-### Dates and event times
+### Exit Soar: `bye`
 
-Deadline `/by` values accept these formats:
+Closes the current Soar session.
 
-```text
-yyyy-MM-dd
-d/M/yyyy
-d/M/yyyy HHmm
-yyyy-MM-dd HH:mm
-d MMM yyyy h:mm a
-ISO local date-time
-```
+Format: `bye`
 
-Event `/from` and `/to` values remain free-form and only need to be nonblank. If an event endpoint
-contains a supported date or date-time, Soar can include that event in matching `date` results.
+## Saving your tasks
 
-### Stored data
+Soar saves changes after adding, editing, marking, unmarking, or deleting a task. Your data is stored in `data/soar.txt` relative to where Soar runs. Avoid editing this file manually; invalid records can prevent Soar from starting.
 
-Soar stores deadlines in canonical ISO date or ISO local date-time form. It does not migrate
-malformed legacy deadline values such as `tmr`; invalid stored records must be removed or repaired
-before Soar can start safely.
+## Command summary
+
+| Action | Command |
+| --- | --- |
+| Add a todo | `todo DESCRIPTION` |
+| Add a deadline | `deadline DESCRIPTION /by DATE_OR_TIME` |
+| Add an event | `event DESCRIPTION /from START /to END` |
+| List tasks | `list` |
+| Find tasks | `find KEYWORD_OR_PHRASE` |
+| View a date | `date DATE_OR_TIME` |
+| Complete / reopen a task | `mark TASK_NUMBER` / `unmark TASK_NUMBER` |
+| Edit a task | `edit TASK_NUMBER FIELD VALUE [FIELD VALUE ...]` |
+| Delete a task | `delete TASK_NUMBER` |
+| Exit | `bye` |
